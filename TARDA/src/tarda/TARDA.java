@@ -6,10 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
@@ -26,16 +22,21 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  */
 public class TARDA
 {
+    // Do work to change this to Network Rail's feed
     // D3330988e8-b79a-4b36-bced-7a62cd7bcad1 - My Queue
     // D347e5ed73-3403-4cc3-ae0f-ac366be7c923 - Doug's Queue(Broken)
     private static final String HOST  = "datafeeds.nationalrail.co.uk";
     private static final int    PORT  = 61616;
     private static final String QUEUE = "D3330988e8-b79a-4b36-bced-7a62cd7bcad1"; // Replace
 
+//    private static final String HOST  = "datafeeds.networkrail.co.uk";
+//    private static final int    PORT  = 61618;
+//    private static final String QUEUE = "11644f37-78d4-475b-9aa6-ee01aee1b31d"; // Replace
+    
     private static boolean stop = false;
     
     //MY CODE
-    XMLReader reader = new XMLReader();
+    private static final XMLReader READER = new XMLReader();
 
     public static void main(String[] args)
     {
@@ -106,10 +107,10 @@ public class TARDA
                                     int len;
                                     while ((len = in.read(buf)) > 0)
                                         baos.write(buf, 0, len);
-                                    XMLReader.test(new ByteArrayInputStream(baos.toByteArray()));
-                                    //String messageText = new String(baos.toByteArray());
-                                    //System.out.println(messageText);
-                                    //XMLStack.test(messageText);
+                                    READER.test(new ByteArrayInputStream(baos.toByteArray()));
+//                                    String messageText = new String(baos.toByteArray());
+//                                    if(messageText.contains("schedule"))
+//                                    System.out.println(messageText);
                                     //if(messageText.contains("toc=\"LE\"")) {
 //                                    if(messageText.contains("requestSource=\"at12\"")) { // request source at12: Greater Anglia
 //                                        ArrayList<String> msgArr = new ArrayList<>(Arrays.asList(messageText.split("><|<|>")));

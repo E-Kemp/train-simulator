@@ -5,12 +5,12 @@
  */
 package tarda.recordTypes;
 
-import tarda.dataRecord;
+import tarda.DataRecord;
 
 /**
  *
  * @author mrp15ndu
  */
-public class TS extends dataRecord{
+public class TS extends DataRecord{
     
 }
