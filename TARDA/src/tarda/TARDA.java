@@ -1,174 +1,76 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package tarda;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
-import javax.jms.BytesMessage;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-import org.apache.activemq.ActiveMQConnectionFactory;
+import java.util.Scanner;
 
 /**
- * Thanks to Cameron Bird for the original code, you really saved my life buddy
- * Here is his project: Signal Maps https://signalmaps.co.uk/
+ * User IO class
+ * @author mrp15ndu
  */
-public class TARDA
-{
-    // Do work to change this to Network Rail's feed
-    // D3330988e8-b79a-4b36-bced-7a62cd7bcad1 - My Queue
-    // D347e5ed73-3403-4cc3-ae0f-ac366be7c923 - Doug's Queue(Broken)
-    private static final String HOST  = "datafeeds.nationalrail.co.uk";
-    private static final int    PORT  = 61616;
-    private static final String QUEUE = "D3330988e8-b79a-4b36-bced-7a62cd7bcad1"; // Replace
-
-//    private static final String HOST  = "datafeeds.networkrail.co.uk";
-//    private static final int    PORT  = 61618;
-//    private static final String QUEUE = "11644f37-78d4-475b-9aa6-ee01aee1b31d"; // Replace
+public class TARDA {
+    public static final TrainMap TRAINS = new TrainMap();
+    public static final STOMPListener STOMP = new STOMPListener();
+    public static boolean stop = false;
     
-    private static boolean stop = false;
-    
-    //MY CODE
-    private static final XMLReader READER = new XMLReader();
-
-    public static void main(String[] args)
-    {
-        System.out.println("Starting...");
-
-        Thread brokerThread = new Thread(new PushPortConsumer());
-        brokerThread.setName("Consumer");
-        brokerThread.setDaemon(false);
-        brokerThread.start();
+    public static void main(String[] args) {
+        System.out.printf("Train And Rail Data Accumulator v0.1 (Alpha)\n");
         
-        Thread commandInput = new Thread(() ->
-        {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)))
-            {
-                String line;
-                while ((line = br.readLine()) != null)
-                {
-                    if (line.contains("\n") || line.isEmpty())
-                        break;
-                }
-                stop = true;
-                brokerThread.interrupt();
-            }
-            catch (IOException ex) { ex.printStackTrace(); }
-        });
-        commandInput.setName("Command Input");
-        commandInput.setDaemon(true);
-        commandInput.start();
-    }
-
-    public static class PushPortConsumer implements Runnable, ExceptionListener 
-    {
-        @Override
-        public void run()
-        {
-            try
-            {
-                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://" + HOST + ":" + PORT + "?jms.clientID=NRDP&wireFormat.maxInactivityDuration=30000");
-                javax.jms.Connection connection = connectionFactory.createConnection("d3user","d3password");
-                connection.start();
-                connection.setExceptionListener(this);
-
-                Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-                Destination destination = session.createQueue(QUEUE);
-                MessageConsumer consumer = session.createConsumer(destination);
-                    
-                    while (!stop)
-                    {
-                        try
-                        {
-                            Message message = consumer.receive();
-                            
-                            if (message instanceof BytesMessage)
-                            {
-                                final BytesMessage bMessage = (BytesMessage) message;
-                                
-                                byte[] sourceBytes;
-                                sourceBytes = new byte[(int) bMessage.getBodyLength()];
-                                bMessage.readBytes(sourceBytes);
-                                
-                                GZIPInputStream in = null;
-                                ByteArrayOutputStream baos = null;
-                                try
-                                {
-                                    in = new GZIPInputStream(new ByteArrayInputStream(sourceBytes));
-                                    baos = new ByteArrayOutputStream();
-                                    byte[] buf = new byte[8192];
-                                    int len;
-                                    while ((len = in.read(buf)) > 0)
-                                        baos.write(buf, 0, len);
-                                    READER.test(new ByteArrayInputStream(baos.toByteArray()));
-//                                    String messageText = new String(baos.toByteArray());
-//                                    if(messageText.contains("schedule"))
-//                                    System.out.println(messageText);
-                                    //if(messageText.contains("toc=\"LE\"")) {
-//                                    if(messageText.contains("requestSource=\"at12\"")) { // request source at12: Greater Anglia
-//                                        ArrayList<String> msgArr = new ArrayList<>(Arrays.asList(messageText.split("><|<|>")));
-//                                        msgArr.remove(0);
-//                                        msgArr.remove(0);
-//                                        msgArr.remove(0);
-//                                        msgArr.remove(msgArr.size()-1);
-//                                        msgArr.remove(msgArr.size()-1);
-//                                        msgArr.remove(msgArr.size()-1);
-//                                        msgArr.forEach(output -> System.out.printf("%s\n", output));
-//                                        System.out.print('\n');
-//                                    }
-                                    
-                                    //System.out.println("Message received & added to processing queue (" + messageQueue.size() + ") (" + messageText.substring(messageText.indexOf("ts=\"")+4, messageText.indexOf("\"", messageText.indexOf("ts=\"")+4)) + ")");
-                                    
-                                    message.acknowledge();
-                                }
-                                catch (IOException e) { e.printStackTrace(); }
-                                finally
-                                {
-                                    if (in != null)
-                                        try { in.close(); }
-                                        catch (IOException ignore) {}
-                                    if (baos != null)
-                                        try { baos.close(); }
-                                        catch (IOException ignore) {}
-                                }
-                            }
-                        }
-                        catch (JMSException e) { if (stop && !(e.getLinkedException() instanceof InterruptedException)) e.printStackTrace(); }
-                    }
-                //});
-                
-                //t.start();
-                //System.in.read();
-                //stop = true;
-
-                consumer.close();
-                session.close();
-                connection.close();
-            }
-            catch (JMSException | RuntimeException e)
-            {
-                System.err.println("Caught: " + e.toString());
-                e.printStackTrace();
-            }
-//            } catch (IOException ex) {
-//                Logger.getLogger(TARDA.class.getName()).log(Level.SEVERE, null, ex);
+        STOMP.go();
+        
+//        Fix this later . . .
+//        do {
+//            switch(textMenu("What would you like to do?", "Run the listener, Display the trains, Clear the trains")) {
+//                case 1:
+//                    STOMP.go();
+//                    break;
+//                case 2:
+//                    TRAINS.toString();
+//                    break;
+//                case 3:
+//                    TRAINS.clear();
+//                    System.out.println("Train list cleared");
+//                    break;
 //            }
-        }
+//        } while(!stop);
 
-        @Override
-        public void onException(JMSException e)
-        {
-            if (e.getMessage().contains("Channel was inactive for too "))
-                // ??
-            System.err.println("JMS Exception (" + e.toString()+ ") occured. Shutting down client.");
-            e.printStackTrace();
+    }
+    
+    /**
+     * This method generates some of the menus used in the user IO
+     * @param title
+     * @param optionsInput
+     * @return option that the user enters
+     */
+    private static int textMenu(String title, String optionsInput) {
+        String[] options = optionsInput.split("\\,\\s+"); // Split the string into arrays at the points where there is a comma followed by a whitespace
+        Scanner scan = new Scanner(System.in);
+        StringBuilder output = new StringBuilder();
+        int option;
+        
+        stop = false;
+        
+        output.append("--- ").append(title).append(" ---"); // Create the task question
+        for(int optionNumber = 0; optionNumber < options.length; optionNumber++) // For loop to add the options and their numbers
+            output.append("\n-- ").append(optionNumber+1).append(") ").append(options[optionNumber]);
+        
+        System.out.println(output.toString()); // Print the menu and options
+        
+        try {
+            option = scan.nextInt();
+            if(option <= options.length && option >= 1) // If the correct option is entered
+                return option;
+            else  if(option == 0) {
+                stop = true;
+                return 0;
+            } else
+                return 0;
+        } catch(Exception e) {
+            return 0;
         }
     }
+    
 }
