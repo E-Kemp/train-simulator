@@ -5,15 +5,13 @@ import org.jgrapht.graph.*;
 
 public class OpenRailSim {
 
-    public Graph<TIPLOC, DefaultEdge> graph = new DirectedMultigraph<>(DefaultEdge.class);
+    public Graph<Point, DefaultEdge> graph = new DirectedMultigraph<>(DefaultEdge.class);
     
     //Default empty constructor
-    public OpenRailSim() {
+    public OpenRailSim(String filename) {
         
     }
     
     
-    public static void main(String[] args) {
-    }
     
 }

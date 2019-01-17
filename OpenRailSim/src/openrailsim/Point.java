@@ -9,10 +9,11 @@ package openrailsim;
  *
  * @author mrp15ndu
  */
-public abstract class TIPLOC {
+public abstract class Point {
     private final String code;
-     
-    public TIPLOC(String code) {
+    
+    
+    public Point(String code) {
         this.code = code;
     }
     

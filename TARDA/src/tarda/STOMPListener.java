@@ -58,7 +58,7 @@ public class STOMPListener
                 stop = true;
                 brokerThread.interrupt();
                 
-                //System.out.println(TARDA.TRAINS.toString());
+                System.out.println(TARDA.TRAINS.toString());
                 
             }
             catch (IOException ex) { ex.printStackTrace(); }
@@ -110,13 +110,12 @@ public class STOMPListener
                                     baos.write(buf, 0, len);
                                 byte[] b = baos.toByteArray();
                                 String s = new String(b);
-//                                if(s.contains("schedule"))
-//                                    TARDA.TRAINS.add(new ByteArrayInputStream(b));
-//                                else if(s.contains("TD"))
+                                if(s.contains("schedule"))
+                                    TARDA.TRAINS.add(new ByteArrayInputStream(b));
                                     
 //                                String printing for testing
-                                if(s.contains("TD"))
-                                System.out.println(s);
+//                                if(s.contains("TD"))
+//                                System.out.println(s);
                                 message.acknowledge();
                             }
                             catch (IOException e) { e.printStackTrace(); }
