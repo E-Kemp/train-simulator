@@ -10,15 +10,18 @@ package openrailsim;
  * @author mrp15ndu
  */
 public abstract class Point {
-    private final String code;
+    private final String CODE;
     
+    public Point() {
+        this.CODE = "SET ME";
+    }
     
     public Point(String code) {
-        this.code = code;
+        this.CODE = code;
     }
     
     public String getTIPLOC() {
-        return this.code;
+        return this.CODE;
     }
     
     @Override
