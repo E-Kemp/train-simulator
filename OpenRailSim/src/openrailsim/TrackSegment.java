@@ -4,20 +4,24 @@
  * and open the template in the editor.
  */
 package openrailsim;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
  *
  * @author mrp15ndu
  */
-public class TrackSegment extends org.jgrapht.graph.DefaultEdge {
+public class TrackSegment extends DefaultWeightedEdge {
     
     private final double LENGTH;
     private final double GRADIENT;
+    
 
     public TrackSegment() {
-        this.LENGTH = 0.00;
+        this.LENGTH = 1.00;
         this.GRADIENT = 0.00;
     }
+    
+    // SORT THIS SHIT OUT
     
     public TrackSegment(double length, double gradient) {
         this.LENGTH = length;

@@ -9,13 +9,12 @@ package openrailsim;
  *
  * @author mrp15ndu
  */
-public class Platform extends Point {
-
-    protected final String PLATFORM_NUM;
-    
-    public Platform(String code, String PtNum) {
-        super(code);
-        this.PLATFORM_NUM = PtNum;
+public class AttributeOutOfRangeException extends Exception {
+    public AttributeOutOfRangeException(String err) {
+        super(err);
     }
     
+    public AttributeOutOfRangeException(String err, Throwable th) {
+        super(err, th);
+    }
 }

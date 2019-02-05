@@ -5,14 +5,18 @@
  */
 package openrailsim;
 
+import java.util.Iterator;
+import java.util.Set;
+
 /**
- *
+ * 
  * @author mrp15ndu
  */
-public abstract class Point {
+public class Point {
     private final String CODE;
     
     public Point() {
+        //Validate this later
         this.CODE = "SET ME";
     }
     
@@ -20,12 +24,18 @@ public abstract class Point {
         this.CODE = code;
     }
     
-    public String getTIPLOC() {
+    public String getCode() {
         return this.CODE;
     }
     
-    @Override
-    public abstract String toString();
+    public boolean isPoint(String code) {
+        return this.CODE.equalsIgnoreCase(code);
+    }
     
-    
+    public static String toString(Set<Point> points) {
+        StringBuilder str = new StringBuilder();
+        Iterator<Point> it = points.iterator();
+        it.forEachRemaining(p -> str.append(p.getCode()).append(','));
+        return str.toString();
+    }
 }
