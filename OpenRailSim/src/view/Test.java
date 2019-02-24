@@ -21,12 +21,9 @@ public class Test {
     
     public static void main(String[] args) throws InterruptedException {
         Test t = new Test();
-        //t.buildTest();
-        //t.test1();
+        t.buildTest();
+        t.test1();
         
-        OpenRailSimGUIOld gui = new OpenRailSimGUIOld();
-        
-        gui.setVisible(true);
     }
     
     public void test1() {

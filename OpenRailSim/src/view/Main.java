@@ -16,23 +16,36 @@ import org.json.JSONArray;
 public class Main {
     
     OpenRailSim SIM;
-    
+    static SwingFrame FRAME;
     
     
     
     public static void main(String[] args) throws IOException {
         System.out.println("--- OpenRailSim ALPHA ---");
-        System.out.println("Please enter the filename to use as a network");
         
-        Scanner scan = new Scanner(System.in);
-        String input = scan.next();
-        
-        try{
-            List<String> lines = Files.readAllLines(Paths.get(input), StandardCharsets.UTF_8);
-
-            JSONArray json = new JSONArray(lines);
-        } catch(IOException e) {
-            System.out.println("File isn't valid!");
+        /* Try and get windows look and feel */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(SwingFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(SwingFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(SwingFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(SwingFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new SwingFrame().setVisible(true);
+            }
+        });
     }
 }
