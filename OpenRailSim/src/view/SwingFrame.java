@@ -1,5 +1,7 @@
 package view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import model.OpenRailSim;
@@ -10,7 +12,8 @@ import model.OpenRailSim;
  */
 public class SwingFrame extends javax.swing.JFrame {
 
-    final OpenRailSim SIM = new OpenRailSim();
+    public static final OpenRailSim SIM = new OpenRailSim();
+    private Thread graphicsThread;
     
     /**
      * Creates new form NewJFrame
@@ -263,7 +266,20 @@ public class SwingFrame extends javax.swing.JFrame {
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         AbstractButton abstractButton = (AbstractButton) evt.getSource();
         boolean selected = abstractButton.getModel().isSelected();
-        JOptionPane.showMessageDialog(null, "Action = " + selected);
+        
+        if(graphicsThread == null) {
+            graphicsThread = new Thread(this.graphicsComponent1);
+        }
+        
+        if(selected) {
+            System.out.println("start");
+            this.graphicsThread.start();
+        }
+        else {
+            this.graphicsThread.interrupt();
+            this.graphicsThread = new Thread(this.graphicsComponent1);
+        }
+        
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

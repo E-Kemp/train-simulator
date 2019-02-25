@@ -2,12 +2,6 @@ package view;
 
 import model.OpenRailSim;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Scanner;
-import org.json.JSONArray;
 
 /**
  * Main class containing all the use IO for the simulator
@@ -16,7 +10,7 @@ import org.json.JSONArray;
 public class Main {
     
     OpenRailSim SIM;
-    static SwingFrame FRAME;
+    static SwingFrame FRAME = new SwingFrame();
     
     
     
@@ -43,8 +37,10 @@ public class Main {
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new SwingFrame().setVisible(true);
+                
+                FRAME.setVisible(true);
             }
         });
     }
