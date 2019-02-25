@@ -21,13 +21,28 @@ public class GraphicsComponent extends javax.swing.JPanel {
         setBackground(Color.BLACK);
     }
     
+    public GraphicsComponent() {
+        super();
+        this.SIM = new OpenRailSim();
+    }
+    
     private void drawComponents() {
+    }
+    
+    private void drawTest() {
+        G.setColor(Color.WHITE);
+        G.fillRect(100, 100, 100, 100);
+        G.setColor(Color.YELLOW);
+        G.fillRect(300, 100, 100, 100);
     }
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         this.G = (Graphics2D) g;
+        setBackground(Color.BLACK);
+        
+        drawTest();
         
         drawComponents();
     }
