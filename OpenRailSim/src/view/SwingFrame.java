@@ -1,10 +1,13 @@
 package view;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import model.OpenRailSim;
+import model.TrackPoint;
+import model.TrackSegment;
 
 /**
  * Class that contains all GUI elements of the system
@@ -12,7 +15,7 @@ import model.OpenRailSim;
  */
 public class SwingFrame extends javax.swing.JFrame {
 
-    public static final OpenRailSim SIM = new OpenRailSim();
+    public OpenRailSim SIM = new OpenRailSim(); // Allocating memory
     private Thread graphicsThread;
     
     /**
@@ -21,6 +24,12 @@ public class SwingFrame extends javax.swing.JFrame {
     public SwingFrame() {
         initComponents();
     }
+    
+    public SwingFrame(OpenRailSim sim) {
+        initComponents();
+        this.SIM = sim;
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,6 +51,8 @@ public class SwingFrame extends javax.swing.JFrame {
         jDialog7 = new javax.swing.JDialog();
         jDialog8 = new javax.swing.JDialog();
         jDialog9 = new javax.swing.JDialog();
+        graphicsComponent1 = new view.GraphicsComponent(this.SIM);
+        jPanel3 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
@@ -49,7 +60,6 @@ public class SwingFrame extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        graphicsComponent1 = new view.GraphicsComponent();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -158,9 +168,22 @@ public class SwingFrame extends javax.swing.JFrame {
         setForeground(new java.awt.Color(204, 204, 204));
         setMinimumSize(new java.awt.Dimension(900, 500));
 
+        javax.swing.GroupLayout graphicsComponent1Layout = new javax.swing.GroupLayout(graphicsComponent1);
+        graphicsComponent1.setLayout(graphicsComponent1Layout);
+        graphicsComponent1Layout.setHorizontalGroup(
+            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 692, Short.MAX_VALUE)
+        );
+        graphicsComponent1Layout.setVerticalGroup(
+            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         jTabbedPane1.setMaximumSize(new java.awt.Dimension(289, 460));
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(289, 460));
         jTabbedPane1.setName(""); // NOI18N
+
+        jPanel1.setMaximumSize(new java.awt.Dimension(287, 434));
 
         jToggleButton1.setText("Start");
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -206,6 +229,8 @@ public class SwingFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Run Simulation", jPanel1);
 
+        jPanel2.setMinimumSize(new java.awt.Dimension(287, 434));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -223,42 +248,46 @@ public class SwingFrame extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("OpenRailSim");
 
-        javax.swing.GroupLayout graphicsComponent1Layout = new javax.swing.GroupLayout(graphicsComponent1);
-        graphicsComponent1.setLayout(graphicsComponent1Layout);
-        graphicsComponent1Layout.setHorizontalGroup(
-            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 712, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(40, 40, 40))))
         );
-        graphicsComponent1Layout.setVerticalGroup(
-            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
+
+        jTabbedPane1.getAccessibleContext().setAccessibleName("Run Simulation");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(graphicsComponent1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(graphicsComponent1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(graphicsComponent1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
-
-        jTabbedPane1.getAccessibleContext().setAccessibleName("Run Simulation");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -315,10 +344,9 @@ public class SwingFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SwingFrame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            SwingFrame f = new SwingFrame();
+            f.setVisible(true);
         });
     }
 
@@ -339,6 +367,7 @@ public class SwingFrame extends javax.swing.JFrame {
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JToggleButton jToggleButton1;

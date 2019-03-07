@@ -12,7 +12,7 @@ import java.util.List;
 public class Service {
     private final String HEADCODE;
     private final List<TrainType> TRAIN;
-    private final List<Point> ROUTE;
+    private final List<TrackPoint> ROUTE;
     
     private double SPEED = 0;
     private long START_TIME = System.currentTimeMillis();
@@ -23,7 +23,7 @@ public class Service {
         this.ROUTE = new ArrayList<>();
     }
     
-    public Service(String headcode, TrainType[] t, Point[] p) {
+    public Service(String headcode, TrainType[] t, TrackPoint[] p) {
         this.HEADCODE = headcode;
         this.TRAIN = new ArrayList<>(Arrays.asList(t));
         this.ROUTE = new ArrayList<>(Arrays.asList(p));
@@ -49,8 +49,8 @@ public class Service {
         return this.TRAIN.get(0);
     }
     
-    public Point[] getRoute() {
-        Point[] p = new Point[this.ROUTE.size()];
+    public TrackPoint[] getRoute() {
+        TrackPoint[] p = new TrackPoint[this.ROUTE.size()];
         return this.ROUTE.toArray(p);
     }
     

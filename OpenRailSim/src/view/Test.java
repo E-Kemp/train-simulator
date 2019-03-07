@@ -2,7 +2,7 @@ package view;
 
 import model.AttributeOutOfRangeException;
 import model.OpenRailSim;
-import model.Point;
+import model.TrackPoint;
 import model.Service;
 import model.TrackSegment;
 import model.TrainType;
@@ -16,14 +16,12 @@ public class Test {
     protected final OpenRailSim SIM;
     
     Test() {
-        this.SIM = new OpenRailSim();
+        this.SIM = buildTest();
     }
     
     public static void main(String[] args) throws InterruptedException {
         Test t = new Test();
-        t.buildTest();
         t.test1();
-        
     }
     
     public void test1() {
@@ -38,15 +36,18 @@ public class Test {
         }        
     }
     
-    public void buildTest() {
-        Point[] p = new Point[6];
-        p[0] = new Point("P1");
-        p[1] = new Point("P2");
-        p[2] = new Point("P3");
-        p[3] = new Point("P4");
-        p[4] = new Point("P5");
-        p[5] = new Point("P6");
-        this.SIM.addVertices(p);
+    
+    public static OpenRailSim buildTest() {
+        OpenRailSim sim = new OpenRailSim();
+        
+        TrackPoint[] p = new TrackPoint[6];
+        p[0] = new TrackPoint("P1", 1,-1);
+        p[1] = new TrackPoint("P2", 2, 0);
+        p[2] = new TrackPoint("P3", 1, 1);
+        p[3] = new TrackPoint("P4", -1, 1);
+        p[4] = new TrackPoint("P5", -2, 0);
+        p[5] = new TrackPoint("P6", -1, -1);
+        sim.addVertices(p);
         
         TrackSegment[] t = new TrackSegment[6];
         t[0] = new TrackSegment(15.68, 3);
@@ -55,12 +56,13 @@ public class Test {
         t[3] = new TrackSegment(2.7, 3);
         t[4] = new TrackSegment(5.7, 1);
         t[5] = new TrackSegment(9.5, 2.3);
-        this.SIM.addEdgeT(p[0], p[5], t[0]);
+        sim.addEdgeT(p[0], p[5], t[0]);
         for (int i = 1; i < 6; i++) {
-            this.SIM.addEdgeT(p[i], p[i-1], t[i]);
+            sim.addEdgeT(p[i], p[i-1], t[i]);
         }
         
-        System.out.println(SIM.toString());
+        System.out.println(sim.toString());
+        return sim;
     }
     
     public static TrainType buildTestTrain() {

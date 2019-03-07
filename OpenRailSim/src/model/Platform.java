@@ -10,12 +10,13 @@ package model;
  * Are usually parts of a path algorithm
  * @author Elliot Jordan Kemp
  */
-public class Platform extends Point {
+public class Platform extends TrackPoint {
 
     protected final String PLATFORM_NUM;
     
     public Platform(String code, String PtNum) {
-        super(code);
+        //broke plz fix
+        //super(code);
         this.PLATFORM_NUM = PtNum;
     }
     
