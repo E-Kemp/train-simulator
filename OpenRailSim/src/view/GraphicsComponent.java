@@ -11,15 +11,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.MouseInputListener;
 import model.OpenRailSim;
-import model.TrackPoint;
-import model.TrackSegment;
 /**
  * Graphics component for the graphical representation of the sim
  * @author Elliot Jordan Kemp
@@ -36,7 +32,7 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
         @Override
         public void run() {
             do {
-                //changeTest();
+                changeTest();
                 reDraw();
                 try {
                     Thread.sleep(500);
@@ -52,11 +48,16 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
     private final OpenRailSim SIM;
     private Graphics2D G;
     
+    boolean DRAGGING;
+    
     private int X = 0;
     private int Y = 0;
     
     private int X_ORG = 0;
     private int Y_ORG = 0;
+    
+    private int X_CUR = 0;
+    private int Y_CUR = 0;
     
     private final ArrayList<Shape> SHAPE_LIST = new ArrayList<>();
     private final List<Line2D> MAP_LINES;
@@ -94,7 +95,7 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
     private void O() {
         G.translate(this.getWidth()/2, this.getHeight()/2);
         G.scale(1, -1);
-        G.translate(X, Y);
+        G.translate(X, Y); // Can be moved if mouse is dragged
     }
     
     public void changeTest() {
@@ -129,8 +130,6 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
         });
     }
     
-    MouseEvent pressed;
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -140,32 +139,45 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
         drawComponents();
     }
 
+    
+    // <editor-fold>
+    
     @Override
     public void mouseDragged(MouseEvent e) {
-        Point coords = new Point(e.getX(), e.getY());
-        this.X = this.X - (pressed.getX() + e.getX());
-        this.Y = this.Y + (pressed.getY() + e.getY());
-        this.reDraw();
+        Point point = e.getPoint();
+        this.X = this.X_ORG - (this.X_CUR - point.x);
+        this.Y = this.Y_ORG + (this.Y_CUR - point.y); // Flipped because java coordinates
+ 
+        if (this.DRAGGING) {
+            repaint();
+        }
     }
 
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Point point = e.getPoint();
+        System.out.println("mousePressed at " + point);
+        this.X_CUR = point.x;
+        this.Y_CUR = point.y;
+        this.DRAGGING = true;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        Point point = e.getPoint();
+        this.X_ORG = this.X;
+        this.Y_ORG = this.Y;
+    }
+    
     @Override
     public void mouseMoved(MouseEvent e) {
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        pressed = e;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
         
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
+    
     @Override
     public void mouseEntered(MouseEvent e) {
     }
@@ -173,4 +185,8 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
     @Override
     public void mouseExited(MouseEvent e) {
     }
+    
+    // </editor-fold>
+    
+    
 }

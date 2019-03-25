@@ -27,10 +27,31 @@ public class OpenRailSim {
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
     
+    /**
+     * Get route of a service headcode
+     * @param code
+     * @return array of track points
+     */
     public TrackPoint[] getRoute(String code) {
         return this.SERVICES.get(code).getRoute();
     }
     
+    /**
+     * Get the TrackPoints of a set of codes
+     * @param codes
+     * @return array of track points
+     */
+    public TrackPoint[] getRoute(String[] codes) {
+        TrackPoint[] pointArr = new TrackPoint[codes.length];
+        for (int i = 0; i < codes.length; i++)
+            pointArr[i] = this.getVert(codes[i]);
+        return pointArr;
+    }
+    
+    /**
+     * Get the 'root' of the map, used for traversal
+     * @return root of the map 
+     */
     public TrackPoint getRoot() {
         return this.VERT_LIST.get(0); // Assume the first index is the root node
     }
