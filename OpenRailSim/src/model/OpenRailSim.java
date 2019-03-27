@@ -4,14 +4,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 /**
  * Main controller class that interacts between all classes
  * JGraphT ditched because of the nuances and problems it causes
  * @author Elliot Jordan Kemp
  */
 public class OpenRailSim {
-    private final List<TrackPoint> VERT_LIST;
+    
+    /**
+     * Class to add extra methods to the ArrayList
+     */
+    public class PointList extends ArrayList<TrackPoint> {
+        public TrackPoint get(String code) {            
+            for (TrackPoint point : this) {
+                if(point.getCode().equals(code))
+                    return point;
+            }
+            return null;
+        }
+        
+        public int indexOf(String code) {
+            for(int i = 0; i < this.size(); i++) { // Don't use functional operator
+                if(this.get(i).getCode().equalsIgnoreCase(code))
+                    return i;
+            }
+            return -1;
+        }
+    }
+    
+    private final PointList VERT_LIST;
     private final HashMap<String, Service> SERVICES;
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -19,7 +40,7 @@ public class OpenRailSim {
     //Default empty constructor
     public OpenRailSim() {
         this.SERVICES = new HashMap<>();
-        this.VERT_LIST = new ArrayList<>();
+        this.VERT_LIST = new PointList();
         buildTest();
     }
 
@@ -62,7 +83,7 @@ public class OpenRailSim {
      * @return the vertex
      */
     public TrackPoint getVert(String code) {
-        return this.VERT_LIST.get(this.getVertIndex(code));
+        return this.VERT_LIST.get(code);
     }
     
     /**
@@ -72,11 +93,7 @@ public class OpenRailSim {
      * @return index of the specified code
      */
     public int getVertIndex(String code) {
-        for(int i = 0; i < this.VERT_LIST.size(); i++) { // Don't use functional operator
-            if(this.VERT_LIST.get(i).getCode().equalsIgnoreCase(code))
-                return i;
-        }
-        return -1;
+        return this.VERT_LIST.indexOf(code);
     }
     
     public List<TrackPoint> vertexSet() {
