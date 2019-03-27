@@ -49,19 +49,34 @@ public class OpenRailSim {
     }
     
     /**
-     * Get the 'root' of the map, used for traversal
+     * Get the 'root' of the map, used for drawing
      * @return root of the map 
      */
     public TrackPoint getRoot() {
         return this.VERT_LIST.get(0); // Assume the first index is the root node
     }
     
+    /**
+     * Gets a specific vertex given a code
+     * @param code
+     * @return the vertex
+     */
     public TrackPoint getVert(String code) {
+        return this.VERT_LIST.get(this.getVertIndex(code));
+    }
+    
+    /**
+     * Used for Dijkstra's path finding algorithm and optimisation of
+     * getting vertices from the graph
+     * @param code
+     * @return index of the specified code
+     */
+    public int getVertIndex(String code) {
         for(int i = 0; i < this.VERT_LIST.size(); i++) { // Don't use functional operator
             if(this.VERT_LIST.get(i).getCode().equalsIgnoreCase(code))
-                return this.VERT_LIST.get(i);
+                return i;
         }
-        return null;
+        return -1;
     }
     
     public List<TrackPoint> vertexSet() {

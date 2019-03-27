@@ -54,4 +54,8 @@ public class TrackSegment {
                 return true;
         return false;
     }
+    
+    public TrackPoint[] getPoints() {
+        return this.VERT;
+    }
 }
