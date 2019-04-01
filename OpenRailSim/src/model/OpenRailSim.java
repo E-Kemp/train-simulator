@@ -15,6 +15,11 @@ public class OpenRailSim {
      * Class to add extra methods to the ArrayList
      */
     public class PointList extends ArrayList<TrackPoint> {
+        /**
+         * Alternative to using the index
+         * @param code
+         * @return TrackPoint
+         */
         public TrackPoint get(String code) {            
             for (TrackPoint point : this) {
                 if(point.getCode().equals(code))
@@ -23,12 +28,27 @@ public class OpenRailSim {
             return null;
         }
         
+        /**
+         * Alternative to using the object itself
+         * @param code
+         * @return index
+         */
         public int indexOf(String code) {
             for(int i = 0; i < this.size(); i++) { // Don't use functional operator
                 if(this.get(i).getCode().equalsIgnoreCase(code))
                     return i;
             }
             return -1;
+        }
+        
+        
+        @Override
+        public PointList subList(int fromIndex, int toIndex) {
+            PointList p = new PointList();
+            for (int i = fromIndex; i < toIndex; i++) {
+                p.add(this.get(i));
+            }
+            return p;
         }
     }
     
@@ -96,7 +116,7 @@ public class OpenRailSim {
         return this.VERT_LIST.indexOf(code);
     }
     
-    public List<TrackPoint> vertexSet() {
+    public PointList vertexSet() {
         return this.VERT_LIST;
     }
     
@@ -156,6 +176,7 @@ public class OpenRailSim {
                 append(t.getTarget(p).getCode()));
         return str.toString();
     }
+    
     
     public List<Line2D> getMap() {
         List<Line2D> list = new ArrayList<>();

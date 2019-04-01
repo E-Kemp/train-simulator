@@ -5,6 +5,7 @@ import java.util.Set;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * A vertex in the graph data structure
@@ -70,6 +71,16 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
         return this.EDGES;
     }
     
+    public List<TrackPoint> getNeighbours() {
+        List<TrackPoint> list = new ArrayList<>();
+        this.EDGES.forEach(edge -> list.add(edge.getTarget(this)));
+        return list;
+    }
+    
+    public TrackPoint getNeighbour(TrackSegment edge) {
+        return edge.getTarget(this);
+    }
+    
     public boolean isMarked() {
         return this.MARK;
     }
@@ -79,6 +90,10 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
     }
     public void unmark() {
         this.MARK = false;
+    }
+    
+    public static boolean allMarked(List<TrackPoint> vertexSet) {
+        return vertexSet.stream().noneMatch(vert -> !vert.isMarked());
     }
     
     /*

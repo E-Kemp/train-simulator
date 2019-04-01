@@ -5,7 +5,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  * A class to use as edges in the graph
  * @author Elliot Jordan Kemp
  */
-public class TrackSegment {
+public class TrackSegment implements Comparable<TrackSegment> {
     
     private final double LENGTH;
     private final double GRADIENT;
@@ -57,5 +57,10 @@ public class TrackSegment {
     
     public TrackPoint[] getPoints() {
         return this.VERT;
+    }
+
+    @Override
+    public int compareTo(TrackSegment o) {
+        return (int) (this.LENGTH - o.LENGTH);
     }
 }

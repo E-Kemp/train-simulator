@@ -1,13 +1,11 @@
 package view;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractButton;
-import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import model.DijkstraPath;
 import model.OpenRailSim;
-import model.TrackPoint;
-import model.TrackSegment;
 
 /**
  * Class that contains all GUI elements of the system
@@ -17,6 +15,8 @@ public class SwingFrame extends javax.swing.JFrame {
 
     public OpenRailSim SIM = new OpenRailSim(); // Allocating memory
     private Thread graphicsThread;
+    private Timer TIMER;
+    public int INTERVAL;
     
     /**
      * Creates new form NewJFrame
@@ -292,20 +292,28 @@ public class SwingFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         AbstractButton abstractButton = (AbstractButton) evt.getSource();
         boolean selected = abstractButton.getModel().isSelected();
         
-        if(graphicsThread == null) {
-            graphicsThread = new Thread(this.graphicsComponent1);
-        }
+//        if(graphicsThread == null) {
+//            graphicsThread = new Thread(this.graphicsComponent1);
+//        }
         
         if(selected) {
             System.out.println("start");
-            this.graphicsThread.start();
+            graphicsThread = new Thread(this.graphicsComponent1);
+            synchronized(this) {
+                this.graphicsThread.start();
+            }
         }
         else {
-            this.graphicsThread.interrupt();
+            System.out.println("stop");
+            synchronized(this) {
+                graphicsThread.stop();
+            }
             this.graphicsThread = new Thread(this.graphicsComponent1);
         }
         
@@ -343,9 +351,12 @@ public class SwingFrame extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             SwingFrame f = new SwingFrame();
+            DijkstraPath p = new DijkstraPath(f.SIM);
+            p.path("P5", null);
             f.setVisible(true);
         });
     }

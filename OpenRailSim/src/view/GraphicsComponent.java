@@ -12,15 +12,13 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.MouseInputListener;
 import model.OpenRailSim;
 /**
- * Graphics component for the graphical representation of the sim
+ * Graphics component for the graphical representation of the simulator
  * @author Elliot Jordan Kemp
  */
-public class GraphicsComponent extends javax.swing.JPanel implements Runnable, MouseMotionListener, MouseInputListener {
+public final class GraphicsComponent extends javax.swing.JPanel implements Runnable, MouseMotionListener, MouseInputListener {
     
     
     @Override
@@ -31,11 +29,12 @@ public class GraphicsComponent extends javax.swing.JPanel implements Runnable, M
     Thread T = new Thread(new Runnable() {
         @Override
         public void run() {
+            
             do {
                 changeTest();
                 reDraw();
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt(); // very important
                     break;
