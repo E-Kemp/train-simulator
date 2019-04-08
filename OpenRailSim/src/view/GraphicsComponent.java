@@ -11,9 +11,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.event.MouseInputListener;
 import model.OpenRailSim;
+import model.Service;
 /**
  * Graphics component for the graphical representation of the simulator
  * @author Elliot Jordan Kemp
@@ -23,59 +25,55 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     
     @Override
     public void run() {
-        T.start();
+        do {
+            changeTest();
+            reDraw();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt(); // very important
+                break;
+            }
+        } while(!STOP);
     }
-    
-    Thread T = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            
-            do {
-                changeTest();
-                reDraw();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt(); // very important
-                    break;
-                }
-            } while(!STOP);
-        }
-    });
+
     
     private volatile boolean STOP = false;
     private final OpenRailSim SIM;
     private Graphics2D G;
-    
-    boolean DRAGGING;
-    
-    private int X = 0;
-    private int Y = 0;
-    
-    private int X_ORG = 0;
-    private int Y_ORG = 0;
-    
-    private int X_CUR = 0;
-    private int Y_CUR = 0;
-    
     private final ArrayList<Shape> SHAPE_LIST = new ArrayList<>();
     private final List<Line2D> MAP_LINES;
     
+    //Cached for ease of use
+    private final HashMap<String, Service> SERVICES;
+    private final HashMap<String, Boolean> SERVICES_GO; // Used for starting and stopping the trains
+    
+    
+    boolean DRAGGING;    
+    private int X = 0;
+    private int Y = 0;
+    private int X_ORG = 0;
+    private int Y_ORG = 0;
+    private int X_CUR = 0;
+    private int Y_CUR = 0;
+    
+
+    
     boolean test = false;    
     
+    /**
+     * Constructor from the Sim
+     * @param sim 
+     */
     public GraphicsComponent(OpenRailSim sim) {
         super();
         this.SIM = sim;
         this.MAP_LINES = sim.getMap();
+        this.SERVICES = sim.cacheServices();
+        this.SERVICES_GO = new HashMap<>();
+        this.SERVICES.keySet().forEach(key -> 
+                this.SERVICES_GO.put(key, Boolean.FALSE));
         addTestShapes();
-        this.addMouseMotionListener(this);
-        this.addMouseListener(this);
-    }
-    
-    public GraphicsComponent() {
-        super();
-        this.SIM = null;
-        this.MAP_LINES = new ArrayList<>();
         this.addMouseMotionListener(this);
         this.addMouseListener(this);
     }
@@ -118,8 +116,6 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
         drawMap();
         
         G.dispose();
-        
-        
     }
     
     private void drawMap() {

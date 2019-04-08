@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 /**
  * Main controller class that interacts between all classes
  * JGraphT ditched because of the nuances and problems it causes
@@ -67,6 +68,15 @@ public class OpenRailSim {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
+    
+    
+    public Set getServiceList() {
+        return this.SERVICES.keySet();
+    }
+    
+    public HashMap<String, Service> cacheServices() {
+        return this.SERVICES;
+    }
     
     /**
      * Get route of a service headcode
@@ -223,6 +233,10 @@ public class OpenRailSim {
         
         this.addVertex(this.getVert("P4"), "P12", 110, -20, 100, 0);
         this.addVertex(this.getVert("P5"), "P13", 110, 100, 0); // by angles!
+        
+        TrainType t1 = new TrainType();
+        
+        this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
     }   
     
     public void test(TrackPoint p) {

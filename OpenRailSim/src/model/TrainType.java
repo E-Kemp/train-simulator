@@ -127,4 +127,13 @@ public class TrainType {
     }
 
     // </editor-fold>
+    
+    public static TrainType test() {
+        try {
+            return new TrainType("Class 90", false, 12, 18.75, 258, 258, 177, 84.5, 1);
+        } catch(AttributeOutOfRangeException e) {
+            System.out.println("Something went wrong!");
+            return null;
+        }
+    }
 }
