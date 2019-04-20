@@ -49,14 +49,14 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
         this.EDGES.addAll(target);
     }
     
-    public TrackPoint(TrackPoint p, String code, int x, int y, double length, double gradient) {
+    public TrackPoint(TrackPoint p, String code, int x, int y, double length, double gradient, double speedLim) {
         super(x, y);
         this.CODE = code;
-        this.EDGES.add(new TrackSegment(this, p, length, gradient));
+        this.EDGES.add(new TrackSegment(this, p, length, gradient, speedLim));
     }
     
-    public boolean addEdge(TrackPoint p, double length, double gradient) {
-        return this.EDGES.add(new TrackSegment(this, p, length, gradient));
+    public boolean addEdge(TrackPoint p, double length, double gradient, double speedLim) {
+        return this.EDGES.add(new TrackSegment(this, p, length, gradient, speedLim));
     }
     
     public boolean addEdge(TrackSegment e) {
@@ -69,6 +69,13 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
     
     public List<TrackSegment> getEdges() {
         return this.EDGES;
+    }
+    
+    public TrackSegment getEdge(TrackPoint p) {
+        for(TrackSegment e : this.EDGES)
+            if(!e.getTarget(p).equals(p))
+                return e;
+        return null;
     }
     
     public List<TrackPoint> getNeighbours() {

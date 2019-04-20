@@ -7,8 +7,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  */
 public class TrackSegment implements Comparable<TrackSegment> {
     
-    private final double LENGTH;
+    private final double LENGTH; // km
     private final double GRADIENT;
+    private double SPEED_LIM; // km/h - not final in case a temporary speed limit is imposed
     private final TrackPoint[] VERT = new TrackPoint[2];
     
     /**
@@ -19,18 +20,20 @@ public class TrackSegment implements Comparable<TrackSegment> {
         this.GRADIENT = 0.00;
     }
 
-    public TrackSegment(TrackPoint[] vertices, double length, double gradient) {
+    public TrackSegment(TrackPoint[] vertices, double length, double gradient, double speedLimit) {
         this.VERT[0] = vertices[0];
         this.VERT[1] = vertices[1];
         this.LENGTH = length;
         this.GRADIENT = gradient;
+        this.SPEED_LIM = speedLimit;
     }
     
-    public TrackSegment(TrackPoint source, TrackPoint target, double length, double gradient) {
+    public TrackSegment(TrackPoint source, TrackPoint target, double length, double gradient, double speedLimit) {
         this.VERT[0] = source;
         this.VERT[1] = target;
         this.LENGTH = length;
         this.GRADIENT = gradient;
+        this.SPEED_LIM = speedLimit;
     }
     
     public double getLength() {
@@ -39,6 +42,14 @@ public class TrackSegment implements Comparable<TrackSegment> {
 
     public double getGradient() {
         return GRADIENT;
+    }
+    
+    public double getSpeedLimit() {
+        return this.SPEED_LIM;
+    }
+    
+    public double changeSpeedLimit(double newLim) {
+        return this.SPEED_LIM = newLim;
     }
     
     public TrackPoint getTarget(TrackPoint p) {

@@ -1,5 +1,9 @@
 package view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import model.AttributeOutOfRangeException;
 import model.OpenRailSim;
 import model.TrackPoint;
@@ -15,17 +19,18 @@ import model.TrainType;
 public class Test {
     protected final OpenRailSim SIM;
     
+    
     Test() {
         this.SIM = new OpenRailSim();
     }
     
-    public static void main(String[] args) throws InterruptedException {
-        Test t = new Test();
-        t.test1();
-    }
+    
     
     public void test1() {
         Service s = new Service("TEST", buildTestTrain());
+        for (int i = 0; i < 10; i++) {
+            s.addRoutePoint(this.SIM.getVert("P" + Integer.toString(i)));
+        }
         s.start();
 //        System.out.println(t.SIM.pathToString(
 //                t.SIM.getRoute(s).get(0)));
@@ -43,5 +48,17 @@ public class Test {
             System.out.println(e.toString());
             return new TrainType();
         }
+    }
+    
+    public static void main(String[] args) throws InterruptedException {
+        Test t = new Test();
+        t.test1();
+        
+        UIManager.LookAndFeelInfo[] looks = UIManager.getInstalledLookAndFeels(); 
+        for (UIManager.LookAndFeelInfo look : looks) { 
+            System.out.println(look.getClassName()); 
+        } 
+        
+        SwingFrame.main(args);
     }
 }

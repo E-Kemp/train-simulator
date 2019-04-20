@@ -55,6 +55,7 @@ public class OpenRailSim {
     
     private final PointList VERT_LIST;
     private final HashMap<String, Service> SERVICES;
+    public double RATE;
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     
@@ -142,23 +143,23 @@ public class OpenRailSim {
         return output;
     }
     
-    public boolean addVertex(TrackPoint p1, String code, int x, int y, double length, double gradient) {
-        TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient);
-        p1.addEdge(p2, length, gradient);
+    public boolean addVertex(TrackPoint p1, String code, int x, int y, double length, double gradient, double speedLim) {
+        TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient, speedLim);
+        p1.addEdge(p2, length, gradient, speedLim);
         return this.VERT_LIST.add(p2);
     }
     
-    public boolean addVertex(TrackPoint p1, String code, double angle, double length, double gradient) {
+    public boolean addVertex(TrackPoint p1, String code, double angle, double length, double gradient, double speedLim) {
         angle = Math.toRadians(angle);
         int x = p1.x + (int) (Math.sin(angle) * length);
         int y = p1.y + (int) (Math.cos(angle) * length);
-        TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient);
-        p1.addEdge(p2, length, gradient);
+        TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient, speedLim);
+        p1.addEdge(p2, length, gradient, speedLim);
         return this.VERT_LIST.add(p2);
     }
     
-    public void addEdge(TrackPoint p1, TrackPoint p2, double length, double gradient) {
-        TrackSegment e = new TrackSegment(p1, p2, length, gradient);
+    public void addEdge(TrackPoint p1, TrackPoint p2, double length, double gradient, double speedLim) {
+        TrackSegment e = new TrackSegment(p1, p2, length, gradient, speedLim);
         p1.addEdge(e);
         p2.addEdge(e);
     }
@@ -206,6 +207,18 @@ public class OpenRailSim {
         return list;
     }
     
+    public double getAngle(int index) {
+        if(index >= this.VERT_LIST.size()-1)
+            return 0;
+        return Math.atan(
+                (this.VERT_LIST.get(index+1).y-this.VERT_LIST.get(index).y) / 
+                (this.VERT_LIST.get(index+1).x-this.VERT_LIST.get(index).x));
+    }
+    
+    public void setRate(double newSpeed) {
+        this.RATE = (int) newSpeed/100;
+    }
+    
 //    private void buildTest() {
 //        this.VERT_LIST.add(new TrackPoint("P0", 0, 200));
 //        this.addVertex(VERT_LIST.get(0), "P1", -100, 0, 100, 0);
@@ -218,25 +231,26 @@ public class OpenRailSim {
 //    }
     
     private void buildTest() {
-        this.VERT_LIST.add(new TrackPoint("P0", -300, -200));
-        this.addVertex(this.getVert("P0"), "P1", -245, -185, 100, 0);
-        this.addVertex(this.getVert("P1"), "P2", -230, -150, 100, 0);
-        this.addVertex(this.getVert("P2"), "P3", -190, -110, 100, 0);
-        this.addVertex(this.getVert("P3"), "P4", -50, -50, 100, 0);
-        this.addVertex(this.getVert("P4"), "P5", 20, 0, 100, 0);
-        this.addVertex(this.getVert("P5"), "P6", 100, 75, 100, 0);
-        this.addVertex(this.getVert("P6"), "P7", 160, 100, 100, 0);
-        this.addVertex(this.getVert("P7"), "P8", 210, 120, 100, 0);
-        this.addVertex(this.getVert("P8"), "P9", 245, 110, 100, 0);
-        this.addVertex(this.getVert("P9"), "P10", 275, 90, 100, 0);
-        this.addVertex(this.getVert("P10"), "P11", 300, 110, 100, 0);
+        this.VERT_LIST.add(new TrackPoint("P0", -300, -200)); // Route!!!
+        this.addVertex(this.getVert("P0"), "P1", -245, -185, 100, 0, 120);
+        this.addVertex(this.getVert("P1"), "P2", -230, -150, 100, 0, 120);
+        this.addVertex(this.getVert("P2"), "P3", -190, -110, 100, 0, 120);
+        this.addVertex(this.getVert("P3"), "P4", -50, -50, 100, 0, 120);
+        this.addVertex(this.getVert("P4"), "P5", 20, 0, 100, 0, 120);
+        this.addVertex(this.getVert("P5"), "P6", 100, 75, 100, 0, 120);
+        this.addVertex(this.getVert("P6"), "P7", 160, 100, 100, 0, 120);
+        this.addVertex(this.getVert("P7"), "P8", 210, 120, 100, 0, 120);
+        this.addVertex(this.getVert("P8"), "P9", 245, 110, 100, 0, 120);
+        this.addVertex(this.getVert("P9"), "P10", 275, 90, 100, 0, 120);
+        this.addVertex(this.getVert("P10"), "P11", 300, 110, 100, 0, 120);
         
-        this.addVertex(this.getVert("P4"), "P12", 110, -20, 100, 0);
-        this.addVertex(this.getVert("P5"), "P13", 110, 100, 0); // by angles!
+        this.addVertex(this.getVert("P4"), "P12", 110, -20, 100, 0, 120);
+        this.addVertex(this.getVert("P5"), "P13", 110, 100, 0, 120); // by angles!
         
         TrainType t1 = new TrainType();
         
         this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
+        this.SERVICES.get("TEST1").addRoutePoints(this.VERT_LIST.subList(0, 11));
     }   
     
     public void test(TrackPoint p) {

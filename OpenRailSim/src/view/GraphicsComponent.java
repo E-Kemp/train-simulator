@@ -25,11 +25,12 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     
     @Override
     public void run() {
+        this.SERVICES.forEach((str, s) -> s.start());
         do {
-            changeTest();
+            //changeTest();
             reDraw();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt(); // very important
                 break;
@@ -46,10 +47,8 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     
     //Cached for ease of use
     private final HashMap<String, Service> SERVICES;
-    private final HashMap<String, Boolean> SERVICES_GO; // Used for starting and stopping the trains
     
-    
-    boolean DRAGGING;    
+    boolean DRAGGING;
     private int X = 0;
     private int Y = 0;
     private int X_ORG = 0;
@@ -70,12 +69,16 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
         this.SIM = sim;
         this.MAP_LINES = sim.getMap();
         this.SERVICES = sim.cacheServices();
-        this.SERVICES_GO = new HashMap<>();
-        this.SERVICES.keySet().forEach(key -> 
-                this.SERVICES_GO.put(key, Boolean.FALSE));
         addTestShapes();
         this.addMouseMotionListener(this);
         this.addMouseListener(this);
+    }
+    
+    public GraphicsComponent() {
+        super();
+        this.SIM = null;
+        this.MAP_LINES = null;
+        this.SERVICES = null;
     }
     
     public void stopThread() {
@@ -106,24 +109,49 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     }
     
     private void drawComponents() {
-        G.setColor(test ? Color.BLACK : Color.RED);
+        G.setColor(/*test ? Color.BLACK : */Color.RED);
         //G.translate(this.getWidth()/2, this.getHe ight()/2);
+        
         O();
-        
-        //SHAPE_LIST.forEach((s) -> G.fill(s));
-        
         G.setStroke(new BasicStroke(2));
+        
+        
         drawMap();
         
-        G.dispose();
+        G.drawString("KEK", 100, 100);
+        
+        drawServices();
+        
     }
     
     private void drawMap() {
         this.MAP_LINES.forEach((l) -> {
-            System.out.printf("%d, %d, %d, %d\n", (int)l.getX1(), (int)l.getY1(), (int)l.getX2(), (int)l.getY2());
+            //System.out.printf("%d, %d, %d, %d\n", (int)l.getX1(), (int)l.getY1(), (int)l.getX2(), (int)l.getY2());
             G.drawLine((int)l.getX1(), (int)l.getY1(), (int)l.getX2(), (int)l.getY2());
         });
     }
+    
+    private void drawServices() {
+        this.SERVICES.forEach((str, s) -> {
+            if(s.isRunning()) {
+                //G.translate(s.getCurrentVert().x, s.getCurrentVert().y);
+                //G.rotate(this.SIM.getAngle(s.getCurrentIndex()));
+                //G.translate(0, s.progress(RATE));
+                double progress = s.progress(this.SIM.RATE);
+                System.out.println(progress);
+//                G.create();
+//                G.translate(
+//                        s.getCurrentVert().x + (int) (progress*Math.sin(SIM.getAngle(s.getCurrentIndex()))),
+//                        s.getCurrentVert().y + (int) (progress*Math.cos(SIM.getAngle(s.getCurrentIndex()))));
+//                G.drawString("Fuck", 0, -10);
+                G.drawString("FUCK", 
+                    s.getCurrentVert().x + (int) (progress*Math.sin(SIM.getAngle(s.getCurrentIndex()))), 
+                    s.getCurrentVert().y + (int) (progress*Math.cos(SIM.getAngle(s.getCurrentIndex()))));
+            }
+//            
+        });
+    }
+    
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -135,7 +163,7 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     }
 
     
-    // <editor-fold>
+    // <editor-fold desc=" Mouse events ">
     
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -182,6 +210,8 @@ public final class GraphicsComponent extends javax.swing.JPanel implements Runna
     }
     
     // </editor-fold>
+    
+    
     
     
 }
