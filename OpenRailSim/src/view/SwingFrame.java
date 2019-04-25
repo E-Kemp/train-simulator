@@ -7,6 +7,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import model.DijkstraPath;
@@ -19,7 +20,7 @@ import model.OpenRailSim;
 public class SwingFrame extends javax.swing.JFrame {
 
     public OpenRailSim SIM = new OpenRailSim(); // Allocating memory
-    private Thread graphicsThread;
+    private Thread SIM_THREAD, GFX_THREAD;
     private Timer TIMER;
     public int INTERVAL;
     
@@ -33,6 +34,7 @@ public class SwingFrame extends javax.swing.JFrame {
     public SwingFrame(OpenRailSim sim) {
         initComponents();
         this.SIM = sim;
+        
     }
     
 
@@ -63,12 +65,13 @@ public class SwingFrame extends javax.swing.JFrame {
         jToggleButton1 = new javax.swing.JToggleButton();
         jButton2 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
-        jSlider1 = new javax.swing.JSlider(JSlider.HORIZONTAL,0,30,20);
+        jSlider1 = new javax.swing.JSlider(JSlider.HORIZONTAL,10, 40, 20);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        graphicsComponent1 = new GraphicsComponent(this.SIM);
+        jPanel2 = new javax.swing.JPanel();
+        canvas1 = new GraphicsCanvas(this.SIM);
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -210,6 +213,7 @@ public class SwingFrame extends javax.swing.JFrame {
 
         jTextField1.setText("No Simulation . . .");
 
+        UIManager.put("Slider.paintValue", false);
         jSlider1.setMinorTickSpacing(1);
         jSlider1.setMajorTickSpacing(10);
         jSlider1.setPaintTrack(true);
@@ -294,22 +298,22 @@ public class SwingFrame extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("Run Simulation");
 
-        javax.swing.GroupLayout graphicsComponent1Layout = new javax.swing.GroupLayout(graphicsComponent1);
-        graphicsComponent1.setLayout(graphicsComponent1Layout);
-        graphicsComponent1Layout.setHorizontalGroup(
-            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 664, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(canvas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        graphicsComponent1Layout.setVerticalGroup(
-            graphicsComponent1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(canvas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -319,15 +323,13 @@ public class SwingFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(graphicsComponent1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(graphicsComponent1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        graphicsComponent1.getAccessibleContext().setAccessibleDescription("");
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.PAGE_START);
 
@@ -351,18 +353,18 @@ public class SwingFrame extends javax.swing.JFrame {
         if(selected) {
             this.jToggleButton1.setText("Stop");
             System.out.println("start");
-            graphicsThread = new Thread((Runnable) this.graphicsComponent1);
+            this.SIM_THREAD = new Thread(this.SIM);
             synchronized(this) {
-                this.graphicsThread.start();
+                if(!this.SIM_THREAD.isAlive())
+                    this.SIM_THREAD.start();
             }
         }
         else {
             this.jToggleButton1.setText("Start");
             System.out.println("stop");
             synchronized(this) {
-                graphicsThread.stop();
+                this.SIM_THREAD.interrupt();
             }
-            this.graphicsThread = new Thread((Runnable) this.graphicsComponent1);
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
@@ -392,13 +394,20 @@ public class SwingFrame extends javax.swing.JFrame {
 
     private void jSliderChangePerformed(ChangeEvent ch) {
         JSlider source = (JSlider) ch.getSource();
-        double value = Math.pow(10, (double)source.getValue() / 10);
+        double value = Math.pow(10, (double)source.getValue()/10);
         DecimalFormat formatter = new DecimalFormat();
         formatter.setMaximumFractionDigits(2);
         jLabel3.setText(formatter.format(value) + "%");
         
-        System.out.printf("%s %f\n", "New Value: ", value);
+        //System.out.printf("%s %s%%\n", "New Value: ", formatter.format(value));
         this.SIM.setRate(value);
+    }
+    
+    
+    public void startGraphics() {
+        this.canvas1.createBufferStrategy(2);
+        this.GFX_THREAD = new Thread((Runnable) this.canvas1);
+        this.GFX_THREAD.start();
     }
     
     /**
@@ -430,11 +439,12 @@ public class SwingFrame extends javax.swing.JFrame {
             DijkstraPath p = new DijkstraPath(f.SIM);
             p.path("P5", null);
             f.setVisible(true);
+            f.startGraphics();
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel graphicsComponent1;
+    private java.awt.Canvas canvas1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JDialog jDialog1;
@@ -452,6 +462,7 @@ public class SwingFrame extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel3;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSlider jSlider1;

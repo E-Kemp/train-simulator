@@ -86,7 +86,7 @@ public class DijkstraPath {
         for(int i = 0; !TrackPoint.allMarked(vertSet); i++) {
             vertSet.get(i).mark(); // Mark the vertex as visited
             TrackPoint p = vertSet.get(i);
-            for(TrackSegment n : p.getEdges()) {
+            for(TrackEdge n : p.getEdges()) {
                 double tmp = dist[i] + n.getLength();
                 if(tmp < dist[getIndex(vertSet, n.getTarget(p))]) {
                     dist[getIndex(vertSet, n.getTarget(p))] = tmp;

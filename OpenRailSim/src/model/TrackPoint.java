@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 public class TrackPoint extends Point implements Comparable<TrackPoint> {
     
     private final String CODE;
-    private final List<TrackSegment> EDGES = new ArrayList();
+    private final List<TrackEdge> EDGES = new ArrayList();
     //mainly used for traversal
     private boolean MARK = false; // used for traversal
     
@@ -35,14 +35,14 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
         this.CODE = code;
     }
 
-    public TrackPoint(TrackSegment source, TrackSegment target, String code, int x, int y) {
+    public TrackPoint(TrackEdge source, TrackEdge target, String code, int x, int y) {
         super(x,y);
         this.CODE = code;
         this.EDGES.add(0, source); // Ensure source is placed at index 0;
         this.EDGES.add(target);
     }
     
-    public TrackPoint(TrackSegment source, List<TrackSegment> target, String code, int x, int y) {
+    public TrackPoint(TrackEdge source, List<TrackEdge> target, String code, int x, int y) {
         super(x,y);
         this.CODE = code;
         this.EDGES.add(0, source);
@@ -52,14 +52,14 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
     public TrackPoint(TrackPoint p, String code, int x, int y, double length, double gradient, double speedLim) {
         super(x, y);
         this.CODE = code;
-        this.EDGES.add(new TrackSegment(this, p, length, gradient, speedLim));
+        this.EDGES.add(new TrackEdge(this, p, length, gradient, speedLim));
     }
     
     public boolean addEdge(TrackPoint p, double length, double gradient, double speedLim) {
-        return this.EDGES.add(new TrackSegment(this, p, length, gradient, speedLim));
+        return this.EDGES.add(new TrackEdge(this, p, length, gradient, speedLim));
     }
     
-    public boolean addEdge(TrackSegment e) {
+    public boolean addEdge(TrackEdge e) {
         return this.EDGES.add(e);
     }
     
@@ -67,12 +67,12 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
         return this.CODE;
     }
     
-    public List<TrackSegment> getEdges() {
+    public List<TrackEdge> getEdges() {
         return this.EDGES;
     }
     
-    public TrackSegment getEdge(TrackPoint p) {
-        for(TrackSegment e : this.EDGES)
+    public TrackEdge getEdge(TrackPoint p) {
+        for(TrackEdge e : this.EDGES)
             if(!e.getTarget(p).equals(p))
                 return e;
         return null;
@@ -84,7 +84,7 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
         return list;
     }
     
-    public TrackPoint getNeighbour(TrackSegment edge) {
+    public TrackPoint getNeighbour(TrackEdge edge) {
         return edge.getTarget(this);
     }
     
@@ -106,7 +106,7 @@ public class TrackPoint extends Point implements Comparable<TrackPoint> {
     /*
     This shouldn't be needed?
     */
-//    public boolean addEdge(TrackSegment t) {
+//    public boolean addEdge(TrackEdge t) {
 //        
 //        return false;
 //    }

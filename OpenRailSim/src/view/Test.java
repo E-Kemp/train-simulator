@@ -8,7 +8,7 @@ import model.AttributeOutOfRangeException;
 import model.OpenRailSim;
 import model.TrackPoint;
 import model.Service;
-import model.TrackSegment;
+import model.TrackEdge;
 import model.TrainType;
 
 
@@ -29,7 +29,7 @@ public class Test {
     public void test1() {
         Service s = new Service("TEST", buildTestTrain());
         for (int i = 0; i < 10; i++) {
-            s.addRoutePoint(this.SIM.getVert("P" + Integer.toString(i)));
+            s.addRoutePoint(this.SIM.getVert("P" + Integer.toString(i)), null);
         }
         s.start();
 //        System.out.println(t.SIM.pathToString(

@@ -1,11 +1,13 @@
 package model;
+import java.awt.Point;
+import java.util.Arrays;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
  * A class to use as edges in the graph
  * @author Elliot Jordan Kemp
  */
-public class TrackSegment implements Comparable<TrackSegment> {
+public class TrackEdge implements Comparable<TrackEdge> {
     
     private final double LENGTH; // km
     private final double GRADIENT;
@@ -15,12 +17,12 @@ public class TrackSegment implements Comparable<TrackSegment> {
     /**
      * Default constructor, should never happen
      */
-    public TrackSegment() {
+    public TrackEdge() {
         this.LENGTH = 1.00;
         this.GRADIENT = 0.00;
     }
 
-    public TrackSegment(TrackPoint[] vertices, double length, double gradient, double speedLimit) {
+    public TrackEdge(TrackPoint[] vertices, double length, double gradient, double speedLimit) {
         this.VERT[0] = vertices[0];
         this.VERT[1] = vertices[1];
         this.LENGTH = length;
@@ -28,7 +30,7 @@ public class TrackSegment implements Comparable<TrackSegment> {
         this.SPEED_LIM = speedLimit;
     }
     
-    public TrackSegment(TrackPoint source, TrackPoint target, double length, double gradient, double speedLimit) {
+    public TrackEdge(TrackPoint source, TrackPoint target, double length, double gradient, double speedLimit) {
         this.VERT[0] = source;
         this.VERT[1] = target;
         this.LENGTH = length;
@@ -38,6 +40,16 @@ public class TrackSegment implements Comparable<TrackSegment> {
     
     public double getLength() {
         return LENGTH;
+    }
+    
+    public double getEdgeLength() {
+        return Point.distance(this.VERT[0].x, this.VERT[0].y, 
+                this.VERT[1].x, this.VERT[1].y);
+                
+//                Math.sqrt(
+//                Math.pow(this.VERT[1].x - this.VERT[0].x, 2) +
+//                Math.pow(this.VERT[1].y - this.VERT[0].y, 2)
+//        );
     }
 
     public double getGradient() {
@@ -71,7 +83,7 @@ public class TrackSegment implements Comparable<TrackSegment> {
     }
 
     @Override
-    public int compareTo(TrackSegment o) {
+    public int compareTo(TrackEdge o) {
         return (int) (this.LENGTH - o.LENGTH);
     }
 }
