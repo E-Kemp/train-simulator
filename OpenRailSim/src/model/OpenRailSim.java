@@ -81,11 +81,11 @@ public class OpenRailSim extends Thread {
         }
     }
 
-    private final int TICK_RATE = 100; // 100ms
+    private final int TICK_RATE = 10; // 100ms
     
     private final PointList VERT_LIST;
     private final LinkedHashMap<String, Service> SERVICES;
-    public double RATE = 0.1;
+    public double RATE = 0.01;
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     
@@ -240,7 +240,7 @@ public class OpenRailSim extends Thread {
     }
     
     public int getCurrentMapIndex(Service s) {
-        return this.getVertIndex(s.getRoute()[0].getSource().getCode()) + s.getCurrentIndex();
+        return this.getVertIndex(s.getRoute()[0].getSource().getCode()) + s.getCurrentMapIndex();
     }
     
     public void setRate(double newSpeed) {
@@ -260,33 +260,36 @@ public class OpenRailSim extends Thread {
     
     private void buildTest() {
         this.VERT_LIST.add(new TrackPoint("P0", -300, -200)); // Route!!!
-        this.addVertex(this.getVert("P0"), "P1", -245, -185, 100, 0, 120);
-        this.addVertex(this.getVert("P1"), "P2", -230, -150, 100, 0, 120);
-        this.addVertex(this.getVert("P2"), "P3", -190, -110, 100, 0, 120);
-        this.addVertex(this.getVert("P3"), "P4", -50, -50, 100, 0, 120);
-        this.addVertex(this.getVert("P4"), "P5", 20, 0, 100, 0, 120);
-        this.addVertex(this.getVert("P5"), "P6", 100, 75, 100, 0, 120);
-        this.addVertex(this.getVert("P6"), "P7", 160, 100, 100, 0, 120);
-        this.addVertex(this.getVert("P7"), "P8", 210, 120, 100, 0, 120);
-        this.addVertex(this.getVert("P8"), "P9", 245, 110, 100, 0, 120);
-        this.addVertex(this.getVert("P9"), "P10", 275, 90, 100, 0, 120);
-        this.addVertex(this.getVert("P10"), "P11", 300, 110, 100, 0, 120);
+        this.addVertex(this.getVert("P0"), "P1", -245, -185, 10, 0, 120);
+        this.addVertex(this.getVert("P1"), "P2", -230, -150, 10, 0, 120);
+        this.addVertex(this.getVert("P2"), "P3", -190, -110, 10, 0, 120);
+        this.addVertex(this.getVert("P3"), "P4", -50, -50, 10, 0, 120);
+        this.addVertex(this.getVert("P4"), "P5", 20, 0, 10, 0, 120);
+        this.addVertex(this.getVert("P5"), "P6", 100, 75, 10, 0, 120);
+        this.addVertex(this.getVert("P6"), "P7", 160, 100, 10, 0, 120);
+        this.addVertex(this.getVert("P7"), "P8", 210, 120, 10, 0, 120);
+        this.addVertex(this.getVert("P8"), "P9", 245, 110, 10, 0, 120);
+        this.addVertex(this.getVert("P9"), "P10", 275, 90, 10, 0, 120);
+        this.addVertex(this.getVert("P10"), "P11", 300, 110, 10, 0, 120);
         
-        this.addVertex(this.getVert("P4"), "P12", 110, -20, 100, 0, 120);
-        this.addVertex(this.getVert("P5"), "P13", 110, 100, 0, 120); // by angles!
+        this.addVertex(this.getVert("P4"), "P12", 110, -20, 10, 0, 120);
+        this.addVertex(this.getVert("P5"), "P13", 110, 10, 0, 120); // by angles!
+        
+        this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
+        this.SERVICES.put("TEST2", new Service("TEST2", TrainType.test()));
         
         TaskQueue q1 = new TaskQueue();
         TaskQueue q2 = new TaskQueue();
         for (int i = 0; i < this.VERT_LIST.size()-3; i++) {
-            q1.add(new BasicTask(this.getVert(i), this.getVert(i+1)));
+            q1.add(new BasicTask(this.SERVICES.get("TEST1"), this.getVert(i), this.getVert(i+1)));
             if(i > 3)
-                q2.add(new BasicTask(this.getVert(i), this.getVert(i+1)));
+                q2.add(new BasicTask(this.SERVICES.get("TEST2"), this.getVert(i), this.getVert(i+1)));
         }
         
-        this.SERVICES.put("TEST2", new Service("TEST2", TrainType.test()));
+        
         this.SERVICES.get("TEST2").addRouteTasks(q2, 3);
         
-        this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
+        
         this.SERVICES.get("TEST1").addRouteTasks(q1, 0);
         
         TrackPoint tp1, tp0 = this.VERT_LIST.get(0);

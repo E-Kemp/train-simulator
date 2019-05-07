@@ -24,7 +24,7 @@ public class StoppingTask extends AbstractTask {
     
     @Override
     protected double progress(double speed) {
-        
+        return 0; // In progress
     }
 
     @Override
@@ -32,6 +32,7 @@ public class StoppingTask extends AbstractTask {
         if(this.DIST <= this.STOP_POINT - this.SERVICE_REF.getStoppingDistance()) {
             
         }
+        return 0; // In progress
     }
     
     

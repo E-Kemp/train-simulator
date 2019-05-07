@@ -13,6 +13,7 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.event.MouseInputListener;
@@ -156,9 +157,10 @@ public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotio
         G.setColor(Color.BLACK);
         for(Service s : this.SERVICES.values()) {
             G.drawString(String.format("%10s: %5s", "Service", s.getHeadcode()), textOffset, 20);
-            G.drawString(String.format("%10s: %5d", "Point", s.getCurrentIndex()), textOffset, 40);
+            G.drawString(String.format("%10s: %5d", "Point", s.getCurrentMapIndex()), textOffset, 40);
             G.drawString(String.format("%10s: %5s km", "Dist", formatter.format(s.getDistance())), textOffset, 60);
             G.drawString(String.format("%10s: %5s kmh", "Speed", formatter.format(s.getSpeed())), textOffset, 80);
+            G.drawString(String.format("%10s: %s", "Points", s.getCurrentEdge().getPointsString()), textOffset, 100);
             textOffset += 150;
         }
     }

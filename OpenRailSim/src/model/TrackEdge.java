@@ -82,6 +82,16 @@ public class TrackEdge implements Comparable<TrackEdge> {
         return this.VERT;
     }
 
+    public String getPointsString() {
+        StringBuilder str = new StringBuilder();
+        str.append('[');
+        str.append(this.VERT[0].x).append(',');
+        str.append(this.VERT[0].y).append("], [");
+        str.append(this.VERT[1].x).append(',');
+        str.append(this.VERT[1].y).append(']');
+        return str.toString();
+    }
+    
     @Override
     public int compareTo(TrackEdge o) {
         return (int) (this.LENGTH - o.LENGTH);
