@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import model.task.*;
 /**
  * Main controller class that interacts between all classes
  * JGraphT ditched because of the nuances and problems it causes
@@ -84,7 +85,7 @@ public class OpenRailSim extends Thread {
     
     private final PointList VERT_LIST;
     private final LinkedHashMap<String, Service> SERVICES;
-    public double RATE = 1;
+    public double RATE = 0.1;
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     
@@ -113,7 +114,7 @@ public class OpenRailSim extends Thread {
      * @param code
      * @return array of track points
      */
-    public TrackPoint[] getRoute(String code) {
+    public AbstractTask[] getRoute(String code) {
         return this.SERVICES.get(code).getRoute();
     }
     
@@ -144,6 +145,10 @@ public class OpenRailSim extends Thread {
      */
     public TrackPoint getVert(String code) {
         return this.VERT_LIST.get(code);
+    }
+    
+    public TrackPoint getVert(int index) {
+        return this.VERT_LIST.get(index);
     }
     
     /**
@@ -223,10 +228,8 @@ public class OpenRailSim extends Thread {
         this.VERT_LIST.forEach(p -> p.unmark()); //Make sure all vertices are unmarked
         
         this.VERT_LIST.forEach(p -> {
-            System.out.printf("%s %d, %d:\n", "Connections for", p.x, p.y);
             for(TrackEdge e : p.getEdges()) {
                 TrackPoint p2 = e.getTarget(p);
-                System.out.printf("%d, %d\n",p2.x, p2.y);
                 if(!p2.isMarked())
                     list.add(new Line2D.Double(p, p2));
             }
@@ -237,7 +240,7 @@ public class OpenRailSim extends Thread {
     }
     
     public int getCurrentMapIndex(Service s) {
-        return this.getVertIndex(s.getRoute()[0].getCode()) + s.getCurrentIndex();
+        return this.getVertIndex(s.getRoute()[0].getSource().getCode()) + s.getCurrentIndex();
     }
     
     public void setRate(double newSpeed) {
@@ -272,21 +275,24 @@ public class OpenRailSim extends Thread {
         this.addVertex(this.getVert("P4"), "P12", 110, -20, 100, 0, 120);
         this.addVertex(this.getVert("P5"), "P13", 110, 100, 0, 120); // by angles!
         
-        TrainType t1 = new TrainType();
-        TrainType t2 = new TrainType();
+        TaskQueue q1 = new TaskQueue();
+        TaskQueue q2 = new TaskQueue();
+        for (int i = 0; i < this.VERT_LIST.size()-3; i++) {
+            q1.add(new BasicTask(this.getVert(i), this.getVert(i+1)));
+            if(i > 3)
+                q2.add(new BasicTask(this.getVert(i), this.getVert(i+1)));
+        }
         
         this.SERVICES.put("TEST2", new Service("TEST2", TrainType.test()));
-        this.SERVICES.get("TEST2").addRoutePoints(this.VERT_LIST.subList(2, 10), 3);
+        this.SERVICES.get("TEST2").addRouteTasks(q2, 3);
         
         this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
-        this.SERVICES.get("TEST1").addRoutePoints(this.VERT_LIST.subList(0, 11), null);
+        this.SERVICES.get("TEST1").addRouteTasks(q1, 0);
         
         TrackPoint tp1, tp0 = this.VERT_LIST.get(0);
-        System.out.printf("%4d, %4d\n", tp0.x, tp0.y);
         for(int i = 1; i < this.VERT_LIST.size(); i++) {
             tp1 = this.VERT_LIST.get(i);
             tp0 = this.VERT_LIST.get(i-1);
-            System.out.printf("%4d, %4d, %4f\n", tp1.x, tp1.y, Point.distance(tp1.x, tp1.y, tp0.x, tp0.y));
         }
     }   
     

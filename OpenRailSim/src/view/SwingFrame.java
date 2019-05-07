@@ -1,8 +1,6 @@
 package view;
 
 import java.text.DecimalFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
@@ -436,8 +434,8 @@ public class SwingFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             SwingFrame f = new SwingFrame();
-            DijkstraPath p = new DijkstraPath(f.SIM);
-            p.path("P5", null);
+//            DijkstraPath p = new DijkstraPath(f.SIM);
+//            p.path("P5", null);
             f.setVisible(true);
             f.startGraphics();
         });

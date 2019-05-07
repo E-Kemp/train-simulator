@@ -4,8 +4,10 @@ import model.task.AbstractTask;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import model.task.TaskQueue;
 
 /**
  * A class to represent the service that a train does
@@ -15,7 +17,7 @@ import java.util.Queue;
 public class Service {
     private final String HEADCODE;
     private final List<TrainType> TRAIN;
-    private final List<TrackPoint> ROUTE;
+    private final TaskQueue ROUTE;
     //private final Queue<AbstractTask> TASKS;
     
     private boolean GO = false;
@@ -28,15 +30,15 @@ public class Service {
     public Service(String headcode) {
         this.HEADCODE = headcode;
         this.TRAIN = new ArrayList<>();
-        this.ROUTE = new ArrayList<>();
+        this.ROUTE = new TaskQueue();
         //this.TASKS = new ArrayDeque<>();
         this.POINT_INDEX_OFFSET = 0;
     }
     
-    public Service(String headcode, TrainType[] t, TrackPoint[] p, int offSet) {
+    public Service(String headcode, TrainType[] t, AbstractTask[] p, int offSet) {
         this.HEADCODE = headcode;
         this.TRAIN = new ArrayList<>(Arrays.asList(t));
-        this.ROUTE = new ArrayList<>(Arrays.asList(p));
+        this.ROUTE = new TaskQueue(Arrays.asList(p));
         this.POINT_INDEX_OFFSET = offSet;
     }
     
@@ -44,7 +46,7 @@ public class Service {
         this.HEADCODE = headcode;
         this.TRAIN = new ArrayList<>();
         this.TRAIN.add(t);
-        this.ROUTE = new ArrayList<>();
+        this.ROUTE = new TaskQueue();
         //this.TASKS = new ArrayDeque<>();
         this.POINT_INDEX_OFFSET = 0;
     }
@@ -62,8 +64,8 @@ public class Service {
         return this.TRAIN.get(0);
     }
     
-    public TrackPoint[] getRoute() {
-        TrackPoint[] p = new TrackPoint[this.ROUTE.size()];
+    public AbstractTask[] getRoute() {
+        AbstractTask[] p = new AbstractTask[this.ROUTE.size()];
         return this.ROUTE.toArray(p);
     }
     
@@ -85,19 +87,19 @@ public class Service {
     public TrackEdge getCurrentEdge() {
         try {
             if(this.GO)
-                return this.ROUTE.get(interIndex()+1).getEdge(this.ROUTE.get(CUR_POINT_INDEX));
+                return this.ROUTE.get(interIndex()+1).getEdge();
             else
-                return this.ROUTE.get(this.ROUTE.size()-1).getEdge(this.ROUTE.get(this.ROUTE.size()-2));
+                return this.ROUTE.get(this.ROUTE.size()-1).getEdge();
         } catch(Exception e) { // Fix this laterrrr
-            return this.ROUTE.get(1).getEdge(this.ROUTE.get(0));
+            return this.ROUTE.get(0).getEdge();
         }
     }
     
     public TrackPoint getCurrentVert() {
         try {
-            return this.ROUTE.get(interIndex());
+            return this.ROUTE.get(interIndex()).getSource();
         } catch(Exception e) {
-            return this.ROUTE.get(1);
+            return this.ROUTE.get(1).getSource();
         }
     }
     
@@ -118,7 +120,7 @@ public class Service {
         return this.GO;
     }
     
-    public int getCurrentIndex() {
+    public int getCurrentMapIndex() {
         return interIndex() + this.POINT_INDEX_OFFSET;
     }
     
@@ -126,21 +128,32 @@ public class Service {
         return this.CUR_POINT_INDEX;
     }
     
+    public AbstractTask getCurrentTask() {
+        return this.ROUTE.get(CUR_POINT_INDEX);
+    }
+    
     public double getDistance() {
         return this.DIST;
+    }
+    
+    public double getStoppingDistance() { // metres
+        double ratio = this.SPEED / this.getLoco().getDec();
+        return 0.5 * this.SPEED * ratio;
     }
     
     public double getAngle() {
         if(interIndex()+1 >= this.ROUTE.size())
             return 0;
         return Math.atan2(
-                (this.ROUTE.get(interIndex()+1).y-this.ROUTE.get(interIndex()).y),
-                (this.ROUTE.get(interIndex()+1).x-this.ROUTE.get(interIndex()).x)
+                (this.ROUTE.get(interIndex()).getTarget().y-this.ROUTE.get(interIndex()).getSource().y),
+                (this.ROUTE.get(interIndex()).getTarget().x-this.ROUTE.get(interIndex()).getSource().x)
         ) - (Math.PI/2);
     }
     
     public double progress(double rate) {
         if(GO) {
+            
+            
             //Firstly set the speed of the service
             if(this.SPEED + (this.TRAIN.get(0).getAcc() * 3.6) >= this.getCurrentEdge().getSpeedLimit())
                 this.SPEED = this.getCurrentEdge().getSpeedLimit();
@@ -167,13 +180,13 @@ public class Service {
     }
     
     
-    public boolean addRoutePoint(TrackPoint p, Integer offSet) {
+    public boolean addRouteTask(AbstractTask p, Integer offSet) {
         if(offSet != null)
             this.POINT_INDEX_OFFSET = offSet;        
         return this.ROUTE.add(p);    
     }
     
-    public boolean addRoutePoints(List<TrackPoint> p, Integer offSet) {
+    public boolean addRouteTasks(List<AbstractTask> p, Integer offSet) {
         if(offSet != null)
             this.POINT_INDEX_OFFSET = offSet;  
         return this.ROUTE.addAll(p);

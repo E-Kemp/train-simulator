@@ -5,6 +5,7 @@
  */
 package model.task;
 
+import model.Service;
 import model.TrackPoint;
 
 /**
@@ -13,13 +14,20 @@ import model.TrackPoint;
  */
 public class BasicTask extends AbstractTask {
 
-    public BasicTask(TrackPoint source, TrackPoint target) {
-        super(source, target);
+    public BasicTask(Service service, TrackPoint source, TrackPoint target) {
+        super(service, source, target);
     }
 
     @Override
-    protected int progress() {
+    protected double progress(double speed) {
+        return this.DIST += speed;
+    }
+
+    @Override
+    protected double progressSpeed() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
     
 }

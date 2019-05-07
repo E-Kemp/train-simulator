@@ -6,10 +6,13 @@
 package model.task;
 
 /**
- *
- * @author elliot
+ * THIS IS TOTALLY BROKEN FIX ME LATER
+ * @author 100128483
  */
 public class TimingTask extends AbstractTask {
+
+
+    
     public static enum TaskType {WAIT, STATION}
     
     private final TaskType TASK_TYPE;
@@ -54,5 +57,18 @@ public class TimingTask extends AbstractTask {
     
     public boolean finish() {
         return DONE = true;
+    }
+    
+    
+    // Abstract implementation
+    
+    @Override
+    protected double progress(double speed) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    protected double progressSpeed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

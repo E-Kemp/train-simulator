@@ -5,12 +5,20 @@
  */
 package model.task;
 
-import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author elliot
  */
-public class TaskQueue extends ArrayDeque {
+public class TaskQueue extends LinkedList<AbstractTask> {
+
+    public TaskQueue() {
+        super();
+    }
     
+    public TaskQueue(List<AbstractTask> l) {
+        super(l);
+    }
 }
