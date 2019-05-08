@@ -14,10 +14,17 @@ import java.util.List;
  */
 public class TaskQueue extends LinkedList<AbstractTask> {
 
+    /**
+     * Default constructor
+     */
     public TaskQueue() {
         super();
     }
     
+    /**
+     * Cast list to the LinkedList
+     * @param l
+     */
     public TaskQueue(List<AbstractTask> l) {
         super(l);
     }

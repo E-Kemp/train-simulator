@@ -25,7 +25,9 @@ import model.Service;
  */
 public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotionListener, MouseInputListener {
     
-    
+    /**
+     *
+     */
     @Override
     public void run() {
         do {
@@ -77,6 +79,9 @@ public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotio
         this.addMouseListener(this);
     }
     
+    /**
+     * Default constructor
+     */
     public GraphicsCanvas() {
         super();
         this.SIM = null;
@@ -84,7 +89,9 @@ public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotio
         this.SERVICES = null;
     }
     
-    
+    /**
+     * Redraw components
+     */
     public void reDraw() {
         BufferStrategy bf = this.getBufferStrategy();
         Graphics2D g = (Graphics2D) bf.getDrawGraphics();
@@ -180,7 +187,7 @@ public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotio
 
     
     // <editor-fold desc=" Mouse events ">
-    
+
     @Override
     public void mouseDragged(MouseEvent e) {
         Point point = e.getPoint();
@@ -207,7 +214,7 @@ public final class GraphicsCanvas extends Canvas implements Runnable, MouseMotio
         this.X_ORG = this.X;
         this.Y_ORG = this.Y;
     }
-    
+
     @Override
     public void mouseMoved(MouseEvent e) {
     }

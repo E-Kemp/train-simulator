@@ -1,5 +1,4 @@
 package model;
-import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,10 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import model.task.*;
+
 /**
  * Main controller class that interacts between all classes
- * JGraphT ditched because of the nuances and problems it causes
- * @author Elliot Jordan Kemp
+ * 
+ * @author 100128483
  */
 public class OpenRailSim extends Thread {
 
@@ -44,7 +44,12 @@ public class OpenRailSim extends Thread {
             return -1;
         }
         
-        
+        /**
+         * Overriden subList method
+         * @param fromIndex
+         * @param toIndex
+         * @return
+         */
         @Override
         public PointList subList(int fromIndex, int toIndex) {
             PointList p = new PointList();
@@ -55,7 +60,9 @@ public class OpenRailSim extends Thread {
         }
     }
     
-    
+    /**
+     * Run method to run the simulation thread
+     */
     @Override
     public void run() {
         this.SERVICES.forEach((str, s) -> s.start());
@@ -85,11 +92,18 @@ public class OpenRailSim extends Thread {
     
     private final PointList VERT_LIST;
     private final LinkedHashMap<String, Service> SERVICES;
-    public double RATE = 0.01;
+
+    /**
+     * Rate of the simulation
+     */
+    public double RATE = 0.1;
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     
-    //Default empty constructor
+
+    /**
+     * Default empty constructor
+     */
     public OpenRailSim() {
         this.SERVICES = new LinkedHashMap<>();
         this.VERT_LIST = new PointList();
@@ -100,17 +114,22 @@ public class OpenRailSim extends Thread {
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
     
-    
+    /**
+     * @return all the keys in the set of services
+     */
     public Set getServiceList() {
         return this.SERVICES.keySet();
     }
     
+    /** 
+     * @return a LinkedHashMap of services
+     */
     public LinkedHashMap<String, Service> cacheServices() {
         return this.SERVICES;
     }
     
     /**
-     * Get route of a service headcode
+     * Get tasks of a service headcode
      * @param code
      * @return array of track points
      */
@@ -147,12 +166,17 @@ public class OpenRailSim extends Thread {
         return this.VERT_LIST.get(code);
     }
     
+    /**
+     * Gets a specific vertex given the index in the array of vertices
+     * @param index
+     * @return the vertex
+     */
     public TrackPoint getVert(int index) {
         return this.VERT_LIST.get(index);
     }
     
     /**
-     * Used for Dijkstra's path finding algorithm and optimisation of
+     * Used for Dijkstra's path finding algorithm (UNFINISHED) and optimisation of
      * getting vertices from the graph
      * @param code
      * @return index of the specified code
@@ -161,10 +185,16 @@ public class OpenRailSim extends Thread {
         return this.VERT_LIST.indexOf(code);
     }
     
+    /**
+     * @return list of vertices
+     */
     public PointList vertexSet() {
         return this.VERT_LIST;
     }
     
+    /**
+     * @return all coordinates in a 2D array
+     */
     public int[][] getCoords() {
         int[][] output = new int[this.vertexSet().size()][2];
         
@@ -177,21 +207,51 @@ public class OpenRailSim extends Thread {
         return output;
     }
     
+    /**
+     * Add a vertex given direct positioning
+     * @param p1
+     * @param code
+     * @param x
+     * @param y
+     * @param length
+     * @param gradient
+     * @param speedLim
+     * @return whether the addition was successful
+     */
     public boolean addVertex(TrackPoint p1, String code, int x, int y, double length, double gradient, double speedLim) {
         TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient, speedLim);
         p1.addEdge(p2, length, gradient, speedLim);
         return this.VERT_LIST.add(p2);
     }
     
-    public boolean addVertex(TrackPoint p1, String code, double angle, double length, double gradient, double speedLim) {
+    /**
+     * Add a vertex given an angle and length
+     * @param p1
+     * @param code
+     * @param angle
+     * @param screenLength
+     * @param length
+     * @param gradient
+     * @param speedLim
+     * @return whether the addition was successful
+     */
+    public boolean addVertex(TrackPoint p1, String code, double angle, int screenLength, double length, double gradient, double speedLim) {
         angle = Math.toRadians(angle);
-        int x = p1.x + (int) (Math.sin(angle) * length);
-        int y = p1.y + (int) (Math.cos(angle) * length);
+        int x = p1.x + (int) (Math.sin(angle) * screenLength);
+        int y = p1.y + (int) (Math.cos(angle) * screenLength);
         TrackPoint p2 = new TrackPoint(p1, code, x, y, length, gradient, speedLim);
         p1.addEdge(p2, length, gradient, speedLim);
         return this.VERT_LIST.add(p2);
     }
     
+    /**
+     * Add an edge given two TrackPoints (joining TrackPoints)
+     * @param p1
+     * @param p2
+     * @param length
+     * @param gradient
+     * @param speedLim
+     */
     public void addEdge(TrackPoint p1, TrackPoint p2, double length, double gradient, double speedLim) {
         TrackEdge e = new TrackEdge(p1, p2, length, gradient, speedLim);
         p1.addEdge(e);
@@ -199,7 +259,7 @@ public class OpenRailSim extends Thread {
     }
     
     // </editor-fold>
-    
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
@@ -211,6 +271,10 @@ public class OpenRailSim extends Thread {
         return str.toString();
     }
     
+    /**
+     * @param p
+     * @return the information of a specific point
+     */
     public String pointToString(TrackPoint p) {
         StringBuilder str = new StringBuilder();
         Iterator<TrackEdge> it = p.getEdges().iterator();
@@ -222,7 +286,9 @@ public class OpenRailSim extends Thread {
         return str.toString();
     }
     
-    
+    /**
+     * @return map of the tracks for drawing
+     */
     public List<Line2D> getMap() {
         List<Line2D> list = new ArrayList<>();
         this.VERT_LIST.forEach(p -> p.unmark()); //Make sure all vertices are unmarked
@@ -239,26 +305,54 @@ public class OpenRailSim extends Thread {
         return list;
     }
     
+    /**
+     * Get the service current index on the map
+     * @param s
+     * @return map index
+     */
     public int getCurrentMapIndex(Service s) {
         return this.getVertIndex(s.getRoute()[0].getSource().getCode()) + s.getCurrentMapIndex();
     }
     
+    /**
+     * Sets the rate from the slider in SwingFrame
+     * @param newSpeed
+     */
     public void setRate(double newSpeed) {
-        this.RATE = newSpeed/100;
+        this.RATE = newSpeed/1000;
+        System.out.println(this.RATE);
     }
     
-//    private void buildTest() {
-//        this.VERT_LIST.add(new TrackPoint("P0", 0, 200));
-//        this.addVertex(VERT_LIST.get(0), "P1", -100, 0, 100, 0);
-//        this.addVertex(VERT_LIST.get(1), "P2", 100, 0, 100, 0);
-//        this.addEdge(this.getVert("P0"), this.getVert("P2"), 200, 0);
-//        this.addVertex(VERT_LIST.get(2), "P3", 100, -100, 100, 0);
-//        this.addVertex(VERT_LIST.get(3), "P4", -100, -100, 100, 0);
-//        this.addEdge(this.getVert("P1"), this.getVert("P4"), 100, 0);
-//        this.addEdge(this.getVert("P1"), this.getVert("P3"), 100, 0);
-//    }
-    
     private void buildTest() {
+//        this.VERT_LIST.add(new TrackPoint("P0", -300, -200)); // Route!!!
+//        this.addVertex(this.getVert("P0"), "P1", 45.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P1"), "P2", 60.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P2"), "P3", 70.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P3"), "P4", 80.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P4"), "P5", 85.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P5"), "P6", 80.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P6"), "P7", 70.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P7"), "P8", 65.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P8"), "P9", 55.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P9"), "P10", 45.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("P10"), "P11", 35.0, 50, 10, 0, 100);
+//        
+//        this.VERT_LIST.add(new TrackPoint("Q0", -320, -180)); // Route!!!
+//        this.addVertex(this.getVert("Q0"), "Q1", 45.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q1"), "Q2", 60.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q2"), "Q3", 70.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q3"), "Q4", 80.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q4"), "Q5", 85.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q5"), "Q6", 80.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q6"), "Q7", 70.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q7"), "Q8", 65.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q8"), "Q9", 55.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q9"), "Q10", 45.0, 50, 10, 0, 100);
+//        this.addVertex(this.getVert("Q10"), "Q11", 35.0, 50, 10, 0, 100);
+        
+        
+        
+        
         this.VERT_LIST.add(new TrackPoint("P0", -300, -200)); // Route!!!
         this.addVertex(this.getVert("P0"), "P1", -245, -185, 10, 0, 120);
         this.addVertex(this.getVert("P1"), "P2", -230, -150, 10, 0, 120);
@@ -272,8 +366,8 @@ public class OpenRailSim extends Thread {
         this.addVertex(this.getVert("P9"), "P10", 275, 90, 10, 0, 120);
         this.addVertex(this.getVert("P10"), "P11", 300, 110, 10, 0, 120);
         
-        this.addVertex(this.getVert("P4"), "P12", 110, -20, 10, 0, 120);
-        this.addVertex(this.getVert("P5"), "P13", 110, 10, 0, 120); // by angles!
+        this.addVertex(this.getVert("P4"), "P12", 150, -80, 10, 0, 120);
+        this.addVertex(this.getVert("P5"), "P13", 110.0, 100, 10, 0, 120); // by angles!
         
         this.SERVICES.put("TEST1", new Service("TEST1", TrainType.test()));
         this.SERVICES.put("TEST2", new Service("TEST2", TrainType.test()));
@@ -284,6 +378,8 @@ public class OpenRailSim extends Thread {
             q1.add(new BasicTask(this.SERVICES.get("TEST1"), this.getVert(i), this.getVert(i+1)));
             if(i > 3)
                 q2.add(new BasicTask(this.SERVICES.get("TEST2"), this.getVert(i), this.getVert(i+1)));
+            //q2.add(new BasicTask(this.SERVICES.get("TEST2"), this.getVert(this.VERT_LIST.size()-i-1), this.getVert(this.VERT_LIST.size()-i-2)));
+                
         }
         
         
@@ -298,9 +394,5 @@ public class OpenRailSim extends Thread {
             tp0 = this.VERT_LIST.get(i-1);
         }
     }   
-    
-    public void test(TrackPoint p) {
-        
-    }
     
 }

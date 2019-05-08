@@ -397,7 +397,7 @@ public class SwingFrame extends javax.swing.JFrame {
         formatter.setMaximumFractionDigits(2);
         jLabel3.setText(formatter.format(value) + "%");
         
-        //System.out.printf("%s %s%%\n", "New Value: ", formatter.format(value));
+        System.out.printf("%s %s%%\n", "New Value: ", formatter.format(value));
         this.SIM.setRate(value);
     }
     

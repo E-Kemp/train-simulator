@@ -2,7 +2,7 @@ package model;
 
 /**
  * A type of train that is used in service
- * @author Elliot Jordan Kemp
+ * @author 100128483
  */
 public class TrainType {
     private enum TractionType {
@@ -23,39 +23,6 @@ public class TrainType {
     
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    
-    /**
-     * Main constructor, requires all attributes
-     * @param trnClass
-     * @param multiUnit
-     * @param carrCount
-     * @param length
-     * @param maxTrac
-     * @param contTrac
-     * @param maxSpeed
-     * @param weight
-     * @param type
-     * @throws model.AttributeOutOfRangeException 
-     */
-//    public TrainType(String trnClass, boolean multiUnit, int carrCount, double length, double maxTrac, double contTrac, double maxSpeed, double weight, int type) 
-//     throws AttributeOutOfRangeException {
-//        try {
-//            this.TRN_CLASS = trnClass;
-//            this.MULTI_UNIT = multiUnit;
-//            this.CAR_COUNT = carrCount;
-//            this.CAR_LENGTH = length;
-//            this.MAX_TRAC_EFFORT = maxTrac;
-//            this.CONT_TRAC_EFFORT = contTrac;
-//            this.MAX_SPEED = maxSpeed;
-//            this.WEIGHT = weight;
-//            this.TRAC_TYPE = TractionType.values()[type];
-//            
-//            this.ACC = 0;
-//            this.DEC = 0;
-//        } catch(Exception e) {
-//            throw new AttributeOutOfRangeException("Train type invalid");
-//        }
-//    }
     
     /**
      * Main constructor, requires all parameters
@@ -110,32 +77,77 @@ public class TrainType {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters">
+
+    /**
+     * @return train class
+     */
     
     public String getTrnClass() { return this.TRN_CLASS; }
     
+    /**
+     * @return whether the train is a multiple unit
+     */
     public boolean isMU() { return this.MULTI_UNIT; }
     
+    /**
+     * @return number of cars on the train
+     */
     public int getCarCount() { return this.CAR_COUNT; }
     
+    /**
+     * @return length of the train
+     */
     public double getLength() { return this.CAR_LENGTH; }
         
+    /**
+     * @return maximum tractive effort
+     */
     public double getMaxTracEffort() { return this.MAX_TRAC_EFFORT; }
     
+    /**
+     * @return continuous tractive effort
+     */
     public double getContTracEffort() { return this.CONT_TRAC_EFFORT; }
         
+    /**
+     * @return top speed of the train
+     */
     public double getMaxSpeed() { return this.MAX_SPEED; }
     
+    /**
+     * @return weight of the train
+     */
     public double getWeight() { return this.WEIGHT; }
     
+    /**
+     * @return if the train is electric
+     */
     public boolean isElectric() { return this.TRAC_TYPE.equals(TractionType.Electric); }
+
+    /**
+     * @return if the train is diesel
+     */
     public boolean isDiesel() { return this.TRAC_TYPE.equals(TractionType.Diesel); }
+
+    /**
+     * @return if the train is hybrid
+     */
     public boolean isHybrid() { return this.TRAC_TYPE.equals(TractionType.Hybrid); }
     
 
     //Acceleration
+
+    /**
+     * @param w
+     * @return acceleration, given the weight
+     */
     public double getAcc(double w) { //m/s^2
         return (this.MAX_TRAC_EFFORT*1000) / w;
     }
+
+    /**
+     * @return acceleration rate
+     */
     public double getAcc() {
         if(this.ACC != 0)
             return this.ACC;
@@ -143,10 +155,16 @@ public class TrainType {
             return getAcc(this.WEIGHT);
     }
     
+    /**
+     * @return deceleration rate
+     */
     public double getDec() { return this.DEC; }
 
     // </editor-fold>
-    
+
+    /**
+     * @return test type to use for testing
+     */
     public static TrainType test() {
         try {
             return new TrainType("Class 90", false, 12, 18.75, 1, 2, 177, 84.5, 1);

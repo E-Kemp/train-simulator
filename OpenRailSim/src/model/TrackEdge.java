@@ -1,11 +1,11 @@
 package model;
+
 import java.awt.Point;
-import java.util.Arrays;
-import org.jgrapht.graph.DefaultWeightedEdge;
+
 
 /**
  * A class to use as edges in the graph
- * @author Elliot Jordan Kemp
+ * @author 100128483
  */
 public class TrackEdge implements Comparable<TrackEdge> {
     
@@ -22,6 +22,13 @@ public class TrackEdge implements Comparable<TrackEdge> {
         this.GRADIENT = 0.00;
     }
 
+    /**
+     * Constructor with all parameters
+     * @param vertices
+     * @param length
+     * @param gradient
+     * @param speedLimit
+     */
     public TrackEdge(TrackPoint[] vertices, double length, double gradient, double speedLimit) {
         this.VERT[0] = vertices[0];
         this.VERT[1] = vertices[1];
@@ -30,6 +37,14 @@ public class TrackEdge implements Comparable<TrackEdge> {
         this.SPEED_LIM = speedLimit;
     }
     
+    /**
+     * Constructor with all parameters (separated TrackPoints)
+     * @param source
+     * @param target
+     * @param length
+     * @param gradient
+     * @param speedLimit
+     */
     public TrackEdge(TrackPoint source, TrackPoint target, double length, double gradient, double speedLimit) {
         this.VERT[0] = source;
         this.VERT[1] = target;
@@ -38,32 +53,48 @@ public class TrackEdge implements Comparable<TrackEdge> {
         this.SPEED_LIM = speedLimit;
     }
     
+    /**
+     * @return length of the track
+     */
     public double getLength() {
         return LENGTH;
     }
     
+    /**
+     * @return length of the line on the map
+     */
     public double getEdgeLength() {
         return Point.distance(this.VERT[0].x, this.VERT[0].y, 
                 this.VERT[1].x, this.VERT[1].y);
-                
-//                Math.sqrt(
-//                Math.pow(this.VERT[1].x - this.VERT[0].x, 2) +
-//                Math.pow(this.VERT[1].y - this.VERT[0].y, 2)
-//        );
     }
 
+    /**
+     * @return gradient of the track
+     */
     public double getGradient() {
         return GRADIENT;
     }
     
+    /**
+     * @return speed limit of the track
+     */
     public double getSpeedLimit() {
         return this.SPEED_LIM;
     }
     
+    /**
+     * Change the speed limit of the track
+     * @param newLim
+     * @return the new speed limit
+     */
     public double changeSpeedLimit(double newLim) {
         return this.SPEED_LIM = newLim;
     }
     
+    /**
+     * @param p
+     * @return the opposite point to the provided point
+     */
     public TrackPoint getTarget(TrackPoint p) {
         if(this.VERT[0].compareTo(p) == 0)
             return this.VERT[1];
@@ -71,6 +102,10 @@ public class TrackEdge implements Comparable<TrackEdge> {
             return this.VERT[0];
     }
     
+    /**
+     * @param p
+     * @return whether the track includes point p
+     */
     public boolean hasPoint(TrackPoint p) {
         for(TrackPoint v : this.VERT)
             if(v.compareTo(p) == 0)
@@ -78,10 +113,16 @@ public class TrackEdge implements Comparable<TrackEdge> {
         return false;
     }
     
+    /**
+     * @return both points of the track
+     */
     public TrackPoint[] getPoints() {
         return this.VERT;
     }
 
+    /**
+     * @return both points of the track as a string
+     */
     public String getPointsString() {
         StringBuilder str = new StringBuilder();
         str.append('[');
@@ -92,6 +133,11 @@ public class TrackEdge implements Comparable<TrackEdge> {
         return str.toString();
     }
     
+    /**
+     * Compare the track length
+     * @param o
+     * @return which order the track is compared to the supplied track
+     */
     @Override
     public int compareTo(TrackEdge o) {
         return (int) (this.LENGTH - o.LENGTH);

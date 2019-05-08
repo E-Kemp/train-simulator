@@ -14,6 +14,12 @@ import model.TrackPoint;
  */
 public class BasicTask extends AbstractTask {
 
+    /**
+     * Basic extention of abstract task
+     * @param service
+     * @param source
+     * @param target
+     */
     public BasicTask(Service service, TrackPoint source, TrackPoint target) {
         super(service, source, target);
     }

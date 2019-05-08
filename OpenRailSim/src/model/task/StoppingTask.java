@@ -10,11 +10,24 @@ import model.TrackPoint;
 public class StoppingTask extends AbstractTask {
     private final double STOP_POINT;
     
+    /**
+     * Full constructor
+     * @param service
+     * @param source
+     * @param end
+     */
     public StoppingTask(Service service, TrackPoint source, TrackPoint end) {
         super(service, source, end);
         this.STOP_POINT = this.EDGE.getLength();
     }
     
+    /**
+     * Full constructor with custom end point
+     * @param service
+     * @param source
+     * @param end
+     * @param stopPoint
+     */
     public StoppingTask(Service service, TrackPoint source, TrackPoint end, double stopPoint) {
         super(service, source, end);
         this.STOP_POINT = stopPoint;
